@@ -40,84 +40,200 @@
             color: var(--text-primary);
             font-size: 14px;
             line-height: 1.5;
-            padding-bottom: 84px;
             user-select: none;
             -webkit-user-select: none;
             overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Shield Lock Screen (Displayed when not authenticated) */
+        #shield-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            background: radial-gradient(circle at 50% 25%, rgba(30, 41, 69, 0.6) 0%, #0b0f19 100%);
+            box-sizing: border-box;
+        }
+
+        .shield-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(16px);
+        }
+
+        .shield-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 20px;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .shield-badge.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .shield-icon {
+            font-size: 54px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 12px rgba(239, 68, 68, 0.25));
+        }
+
+        .shield-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .shield-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .shield-alert {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .shield-alert strong {
+            color: var(--accent-warning);
+        }
+
+        .shield-alert code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent-primary);
+        }
+
+        .shield-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+        }
+
+        /* Main Application Root (Hidden until authenticated & decrypted) */
+        #app-root {
+            display: none;
+            padding-bottom: 84px;
         }
 
         /* Top Header */
         header {
             position: sticky;
             top: 0;
-            background: rgba(11, 15, 25, 0.9);
+            z-index: 50;
+            background: rgba(11, 15, 25, 0.85);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 12px 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            justify-content: space-between;
         }
 
-        .header-left {
+        .brand-container {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .header-title {
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 0 12px var(--accent-primary-glow);
+        }
+
+        .brand-title {
             font-size: 16px;
             font-weight: 700;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .user-status {
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .badge-live {
-            background: var(--accent-success-glow);
-            color: var(--accent-success);
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--accent-success);
+            font-weight: 600;
         }
 
-        .pulse-dot {
+        .user-status .pulse-dot {
             width: 6px;
             height: 6px;
-            border-radius: 50%;
             background-color: var(--accent-success);
-            animation: pulse 2s infinite ease-in-out;
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-success);
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.4; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.4; transform: scale(0.9); }
-        }
-
-        .header-user {
-            font-size: 12px;
-            color: var(--accent-primary);
-            font-weight: 600;
-            background: var(--accent-primary-glow);
-            padding: 3px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(56, 189, 248, 0.25);
-        }
-
-        /* Main Container */
-        .container {
+        /* Container & Tabs */
+        .app-container {
             padding: 16px;
-            max-width: 640px;
+            max-width: 680px;
             margin: 0 auto;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Cards */
@@ -127,110 +243,107 @@
             border-radius: var(--radius-lg);
             padding: 16px;
             margin-bottom: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .card-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 12px;
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 8px;
-            letter-spacing: -0.2px;
+            gap: 6px;
         }
 
         .card-subtitle {
             font-size: 11px;
-            color: var(--text-secondary);
+            color: var(--accent-primary);
+            font-weight: 600;
         }
 
-        /* Treasury Stats Grid */
+        /* Grid */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 8px;
         }
 
         .stat-box {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(11, 15, 25, 0.6);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 12px;
-            border: 1px solid var(--border-color);
         }
 
         .stat-label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+            font-size: 11px;
+            color: var(--text-muted);
             margin-bottom: 4px;
-            font-weight: 600;
         }
 
         .stat-value {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
         }
 
         .stat-sub {
-            font-size: 11px;
+            font-size: 10px;
+            color: var(--text-secondary);
             margin-top: 2px;
-            font-weight: 500;
         }
 
-        /* Decision Cards */
+        /* Decision Items */
         .decision-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            border: 1px solid var(--border-color-glow);
             padding: 14px;
             margin-bottom: 12px;
-            transition: all 0.25s ease;
+            transition: border-color 0.15s;
         }
 
         .decision-item.resolved {
             border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.03);
+            background: rgba(16, 185, 129, 0.04);
         }
 
         .decision-badge {
-            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
             background: rgba(245, 158, 11, 0.15);
             color: var(--accent-warning);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            display: inline-block;
         }
 
         .decision-badge.badge-success {
-            background: var(--accent-success-glow);
+            background: rgba(16, 185, 129, 0.15);
             color: var(--accent-success);
-            border-color: rgba(16, 185, 129, 0.25);
+            border-color: rgba(16, 185, 129, 0.3);
         }
 
         .decision-title {
             font-size: 14px;
             font-weight: 700;
-            margin-bottom: 6px;
             color: var(--text-primary);
+            margin: 6px 0 4px;
         }
 
         .decision-prompt {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 12px;
             line-height: 1.4;
@@ -243,132 +356,125 @@
         }
 
         .option-button {
-            background: var(--accent-primary-glow);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            color: var(--text-primary);
-            padding: 12px 14px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
             border-radius: var(--radius-md);
-            font-size: 13px;
-            font-weight: 600;
+            padding: 12px 14px;
+            color: var(--text-primary);
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.15s ease;
             display: flex;
             flex-direction: column;
             gap: 3px;
         }
 
         .option-button:active {
-            background: rgba(56, 189, 248, 0.35);
+            background: rgba(56, 189, 248, 0.25);
             border-color: var(--accent-primary);
             transform: scale(0.98);
         }
 
         .option-label {
-            font-weight: 700;
-            color: #e0f2fe;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-primary);
         }
 
         .option-desc {
             font-size: 11px;
             color: var(--text-secondary);
-            font-weight: 400;
-            line-height: 1.35;
-        }
-
-        /* Node Rows */
-        .node-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .node-row:last-child {
-            border-bottom: none;
-        }
-
-        .node-meta h4 {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .node-meta p {
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .node-status {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 6px;
-            background: var(--accent-success-glow);
-            color: var(--accent-success);
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            line-height: 1.3;
         }
 
         /* Task Items */
         .task-item {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
+            padding: 10px 12px;
+            background: rgba(11, 15, 25, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
         }
 
         .task-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            line-height: 1.35;
+            color: var(--text-primary);
         }
 
         .task-sub {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 2px;
+            font-size: 10px;
+            color: var(--text-muted);
         }
 
         .task-badge {
             font-size: 10px;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 6px;
-            white-space: nowrap;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
         }
 
-        .badge-done { background: var(--accent-success-glow); color: var(--accent-success); }
-        .badge-progress { background: var(--accent-primary-glow); color: var(--accent-primary); }
-        .badge-review { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+        .badge-done {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
 
-        /* Mandate Items */
+        .badge-progress {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .badge-review {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        /* Node List */
+        .node-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(11, 15, 25, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+        }
+
+        .node-meta h4 {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .node-meta p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .node-status {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-success);
+            font-family: monospace;
+        }
+
+        /* Mandate Card */
         .mandate-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(11, 15, 25, 0.6);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 12px;
-            border: 1px solid var(--border-color);
             margin-bottom: 10px;
         }
 
         .mandate-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
+            color: var(--accent-primary);
             margin-bottom: 4px;
-            color: #e0f2fe;
         }
 
         .mandate-desc {
@@ -377,48 +483,19 @@
             line-height: 1.4;
         }
 
-        /* Notification Toast */
-        .toast {
-            position: fixed;
-            top: 64px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-30px);
-            background: rgba(16, 185, 129, 0.95);
-            backdrop-filter: blur(12px);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Bottom Navigation Bar */
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
+            z-index: 50;
             background: rgba(11, 15, 25, 0.92);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
-            z-index: 100;
+            padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
         }
 
         .nav-item {
@@ -427,357 +504,391 @@
             align-items: center;
             gap: 3px;
             color: var(--text-muted);
-            text-decoration: none;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            width: 20%;
-            transition: color 0.2s ease, transform 0.15s ease;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
             position: relative;
-        }
-
-        .nav-item:active {
-            transform: scale(0.92);
+            flex: 1;
         }
 
         .nav-item.active {
             color: var(--accent-primary);
+            font-weight: 700;
         }
 
         .nav-icon {
-            font-size: 19px;
+            font-size: 18px;
         }
 
         .nav-badge {
             position: absolute;
-            top: 1px;
+            top: 2px;
             right: calc(50% - 16px);
             background: var(--accent-danger);
-            color: white;
+            color: #fff;
             font-size: 9px;
-            font-weight: 800;
-            border-radius: 10px;
+            font-weight: 700;
             padding: 1px 5px;
-            line-height: 1.2;
+            border-radius: 10px;
             display: none;
         }
 
-        .view-section {
-            display: none;
-            animation: fadeIn 0.25s ease-in-out;
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-primary);
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+            z-index: 100;
+            white-space: nowrap;
         }
 
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <span class="badge-live"><span class="pulse-dot"></span> LIVE</span>
-            <div class="header-title">Insight Executive</div>
-        </div>
-        <div class="header-user" id="user-display">@insight1620</div>
-    </header>
 
+    <!-- 0. SHIELD SCREEN (Displayed for unauthorized browsers or external users) -->
+    <div id="shield-screen" class="shield-container">
+        <div class="shield-card">
+            <div id="shield-badge" class="shield-badge">🔒 INS-31 EXECUTIVE SHIELD</div>
+            <div id="shield-icon" class="shield-icon">🛡️</div>
+            <h2 id="shield-title" class="shield-title">Beveiligde Directie Cockpit</h2>
+            <p id="shield-desc" class="shield-desc">
+                Deze directie-applicatie is strikt vertrouwelijk en beveiligd met end-to-end sessieverificatie en encryptie.
+            </p>
+            <div id="shield-alert" class="shield-alert">
+                <strong>Toegang via openbare browsers is permanent geblokkeerd.</strong><br>
+                Deze applicatie kan uitsluitend worden geopend binnen de officiële Telegram app door de geautoriseerde directie (<code>@insight1620</code>).
+            </div>
+            <div id="shield-meta" class="shield-meta">
+                Mandaat: INS-31 &amp; INS-20 • Zero Data Leakage Policy Actief
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Rendered exclusively when authenticated & decrypted) -->
+    <div id="app-root">
+        <!-- Top App Header -->
+        <header>
+            <div class="brand-container">
+                <div class="brand-logo">IN</div>
+                <div>
+                    <div class="brand-title">Insight Executive</div>
+                    <div class="brand-sub">Directie Cockpit &amp; Besluiten</div>
+                </div>
+            </div>
+            <div class="user-status">
+                <span class="pulse-dot"></span>
+                <span id="user-display">@insight1620</span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="app-container">
+
+            <!-- 1. COCKPIT TAB -->
+            <section id="tab-cockpit" class="view-section active">
+                <!-- Safe Multi-Sig Treasury Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🏛️ Kluis &amp; Schatkist (Safe Multi-Sig)</span>
+                        <span class="card-subtitle" id="treasury-network">Arbitrum One (EVM)</span>
+                    </div>
+                    <div id="val-safe-address" style="font-size: 11px; font-family: monospace; color: var(--text-secondary); word-break: break-all; margin-bottom: 10px; background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1
+                    </div>
+                    <div class="grid-2">
+                        <div class="stat-box">
+                            <div class="stat-label">Eigen Inleg</div>
+                            <div class="stat-value" id="val-eigen-inleg" style="color: var(--accent-success);">€0,00</div>
+                            <div class="stat-sub" style="color: var(--accent-success);">100% Zero-Inleg Garantie</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Privé Risico</div>
+                            <div class="stat-value" id="val-prive-risico" style="color: var(--accent-success);">€0,00</div>
+                            <div class="stat-sub" style="color: var(--accent-success);">Volledig Afgeschermd</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Schatkist Saldo</div>
+                            <div class="stat-value" id="val-saldo">$0,00</div>
+                            <div class="stat-sub" id="val-saldo-sub" style="color: var(--accent-primary);">0.0000 ETH • 0 USDC</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Bedrijfsstatus</div>
+                            <div class="stat-value" style="color: var(--accent-primary); font-size: 15px;">Operationeel</div>
+                            <div class="stat-sub" style="color: var(--text-secondary);">Autonome Uitvoering</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voortgang & KPIs -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📊 Autonome Voortgang &amp; KPIs</span>
+                        <span class="card-subtitle" id="kpi-pct">93% Mijlpaal</span>
+                    </div>
+                    <div class="grid-2">
+                        <div class="stat-box">
+                            <div class="stat-label">Voltooide Taken</div>
+                            <div class="stat-value" id="val-done" style="color: var(--accent-success);">802+</div>
+                            <div class="stat-sub" style="color: var(--text-secondary);">Geverifieerde Deliveries</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Wachtende Besluiten</div>
+                            <div class="stat-value" id="val-pending-count" style="color: var(--accent-warning);">0</div>
+                            <div class="stat-sub" id="val-pending-sub" style="color: var(--accent-success);">Geen actie vereist</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Snelle Acties -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">⚡ Snelle Directie Acties</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="refreshData()">
+                            <span class="option-label">🔄 Verversen</span>
+                            <span class="option-desc">Haal live state op</span>
+                        </button>
+                        <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="switchTab('decisions')">
+                            <span class="option-label">🗳️ Keuzes</span>
+                            <span class="option-desc" id="btn-pending-sub">Direct fiatteren</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cluster Telemetrie -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🖥️ Multi-Cloud Node Telemetrie</span>
+                        <span class="card-subtitle" id="cluster-node-count">5 Nodes Actief</span>
+                    </div>
+                    <div id="nodes-container">
+                        <!-- Dynamisch geladen na decryptie -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. KEUZES & BESLUITEN TAB -->
+            <section id="tab-decisions" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🗳️ Directiebesluiten &amp; Keuzes</span>
+                        <span class="card-subtitle" id="decisions-status-badge">Live Sync</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                        Zodra een agent uw fiat nodig heeft, verschijnt het besluit hier met 1-tap opties. Tik op een optie om het besluit direct vast te leggen.
+                    </p>
+
+                    <div id="decisions-list">
+                        <!-- Dynamisch gevuld na decryptie -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. TAKEN TAB -->
+            <section id="tab-tasks" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📋 Actieve Taken &amp; Mijlpalen</span>
+                        <span class="card-subtitle">Paperclip Registry</span>
+                    </div>
+                    <div id="tasks-list">
+                        <!-- Dynamisch gevuld na decryptie -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. TEAMS TAB -->
+            <section id="tab-team" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">👥 Teams &amp; Agent Roster</span>
+                        <span class="card-subtitle" id="val-team-count">Agents</span>
+                    </div>
+                    <div id="team-list">
+                        <!-- Dynamisch gevuld na decryptie -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. DIRECTIE & MANDATEN TAB -->
+            <section id="tab-governance" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🛡️ Directie &amp; Bindende Mandaten</span>
+                        <span class="card-subtitle">Bekrachtigd</span>
+                    </div>
+                    <div id="mandates-list">
+                        <!-- Dynamisch gevuld na decryptie -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('cockpit')">
+                <span class="nav-icon">🏛️</span>
+                <span>Cockpit</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('decisions')">
+                <span class="nav-icon">🗳️</span>
+                <span>Keuzes</span>
+                <span class="nav-badge" id="nav-badge-count">0</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('tasks')">
+                <span class="nav-icon">📋</span>
+                <span>Taken</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('team')">
+                <span class="nav-icon">👥</span>
+                <span>Teams</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('governance')">
+                <span class="nav-icon">🛡️</span>
+                <span>Directie</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Toast Notification Popup -->
     <div id="toast" class="toast">
-        <span>✅</span>
-        <span id="toast-msg">Besluit succesvol doorgevoerd</span>
+        <span id="toast-msg">Melding</span>
     </div>
-
-    <div class="container">
-        <!-- 1. COCKPIT TAB -->
-        <section id="tab-cockpit" class="view-section active">
-            <!-- Kluis & Schatkist -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🏛️ Kluis & Schatkist (Safe Multi-Sig)</span>
-                    <span class="card-subtitle">Arbitrum One (EVM)</span>
-                </div>
-                <div style="font-size: 11px; font-family: monospace; color: var(--text-secondary); word-break: break-all; margin-bottom: 10px; background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
-                    0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1
-                </div>
-                <div class="grid-2">
-                    <div class="stat-box">
-                        <div class="stat-label">Eigen Inleg</div>
-                        <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
-                        <div class="stat-sub" style="color: var(--accent-success);">100% Zero-Inleg Garantie</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Privé Risico</div>
-                        <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
-                        <div class="stat-sub" style="color: var(--accent-success);">Volledig Afgeschermd</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Schatkist Saldo</div>
-                        <div class="stat-value" id="val-saldo">$0,00</div>
-                        <div class="stat-sub" style="color: var(--accent-primary);">0.0000 ETH • 0 USDC</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Bedrijfsstatus</div>
-                        <div class="stat-value" style="color: var(--accent-primary); font-size: 15px;">Operationeel</div>
-                        <div class="stat-sub" style="color: var(--text-secondary);">27 Projecten Actief</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voortgang & KPIs -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">📊 Autonome Voortgang & KPIs</span>
-                    <span class="card-subtitle" id="kpi-pct">75% Mijlpaal</span>
-                </div>
-                <div class="grid-2">
-                    <div class="stat-box">
-                        <div class="stat-label">Voltooide Taken</div>
-                        <div class="stat-value" id="val-done" style="color: var(--accent-success);">21 / 28</div>
-                        <div class="stat-sub" style="color: var(--text-secondary);">Geverifieerde Deliveries</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Wachtende Besluiten</div>
-                        <div class="stat-value" id="val-pending-count" style="color: var(--accent-warning);">0</div>
-                        <div class="stat-sub" id="val-pending-sub" style="color: var(--accent-success);">Geen actie vereist</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Snelle Acties -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">⚡ Snelle Directie Acties</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="refreshData()">
-                        <span class="option-label">🔄 Verversen</span>
-                        <span class="option-desc">Haal live state op</span>
-                    </button>
-                    <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="switchTab('decisions')">
-                        <span class="option-label">🗳️ Keuzes</span>
-                        <span class="option-desc" id="btn-pending-sub">Direct fiatteren</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Cluster Telemetrie -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🖥️ Multi-Cloud Node Telemetrie</span>
-                    <span class="card-subtitle">5 Nodes Actief</span>
-                </div>
-                <div id="nodes-container">
-                    <div class="node-row">
-                        <div class="node-meta">
-                            <h4>srv-01 (GCP)</h4>
-                            <p>High-Throughput Ingestion</p>
-                        </div>
-                        <div class="node-status">● 18ms</div>
-                    </div>
-                    <div class="node-row">
-                        <div class="node-meta">
-                            <h4>srv-02 (GCP)</h4>
-                            <p>Arbitrage & Math Engine</p>
-                        </div>
-                        <div class="node-status">● 22ms</div>
-                    </div>
-                    <div class="node-row">
-                        <div class="node-meta">
-                            <h4>oci-amd-01 (OCI)</h4>
-                            <p>Trade Execution Node</p>
-                        </div>
-                        <div class="node-status">● 14ms</div>
-                    </div>
-                    <div class="node-row">
-                        <div class="node-meta">
-                            <h4>oci-amd-02 (OCI)</h4>
-                            <p>Standby Execution Node</p>
-                        </div>
-                        <div class="node-status">● 15ms</div>
-                    </div>
-                    <div class="node-row">
-                        <div class="node-meta">
-                            <h4>oci-arm-01 (OCI)</h4>
-                            <p>Paperclip Core & Telegram Bot</p>
-                        </div>
-                        <div class="node-status">● 1ms</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. KEUZES & BESLUITEN TAB -->
-        <section id="tab-decisions" class="view-section">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🗳️ Directiebesluiten & Keuzes</span>
-                    <span class="card-subtitle" id="decisions-status-badge">Live Sync</span>
-                </div>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-                    Zodra een agent uw fiat nodig heeft, verschijnt het besluit hier met 1-tap opties. Tik op een optie om het besluit direct vast te leggen.
-                </p>
-
-                <div id="decisions-list">
-                    <!-- Dynamisch gevuld -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. TAKEN TAB -->
-        <section id="tab-tasks" class="view-section">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">📋 Actieve Taken & Mijlpalen</span>
-                    <span class="card-subtitle">Paperclip Registry</span>
-                </div>
-                <div id="tasks-list">
-                    <!-- Dynamisch gevuld -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. TEAMS TAB -->
-        <section id="tab-team" class="view-section">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">👥 Teams & Agent Roster</span>
-                    <span class="card-subtitle">261 Agents</span>
-                </div>
-                <div id="team-list">
-                    <!-- Dynamisch gevuld -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. DIRECTIE & MANDATEN TAB -->
-        <section id="tab-governance" class="view-section">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🛡️ Directie & Bindende Mandaten</span>
-                    <span class="card-subtitle">Bekrachtigd</span>
-                </div>
-                <div id="mandates-list">
-                    <!-- Dynamisch gevuld -->
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('cockpit')">
-            <span class="nav-icon">🏛️</span>
-            <span>Cockpit</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('decisions')">
-            <span class="nav-icon">🗳️</span>
-            <span>Keuzes</span>
-            <span class="nav-badge" id="nav-badge-count">0</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tasks')">
-            <span class="nav-icon">📋</span>
-            <span>Taken</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('team')">
-            <span class="nav-icon">👥</span>
-            <span>Teams</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('governance')">
-            <span class="nav-icon">🛡️</span>
-            <span>Directie</span>
-        </div>
-    </nav>
 
     <script>
-        // Init Telegram WebApp
+        // Security Gate Constants (INS-31 Executive Shield)
+        const ALLOWED_USER_ID = 1540309631;
+        const ALLOWED_USERNAME = "insight1620";
+
+        // Telegram WebApp Object Detection
         const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-            if (tg.setHeaderColor) tg.setHeaderColor('#0b0f19');
-            if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0f19');
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const u = tg.initDataUnsafe.user;
-                document.getElementById('user-display').textContent = u.username ? '@' + u.username : u.first_name;
+        const initData = (tg && tg.initData) ? tg.initData : "";
+        const user = (tg && tg.initDataUnsafe) ? tg.initDataUnsafe.user : null;
+
+        // Determine environment
+        const isInsideTelegram = Boolean(tg && typeof initData === "string" && initData.length > 0 && user);
+        const isAuthorizedUser = Boolean(
+            isInsideTelegram && (
+                Number(user.id) === ALLOWED_USER_ID || 
+                (user.username && String(user.username).toLowerCase() === ALLOWED_USERNAME)
+            )
+        );
+
+        // Render Access Denied Lockout Screen
+        function renderLockoutScreen(reason) {
+            const shieldScreen = document.getElementById('shield-screen');
+            const appRoot = document.getElementById('app-root');
+            shieldScreen.style.display = 'flex';
+            appRoot.style.display = 'none';
+
+            const badge = document.getElementById('shield-badge');
+            const icon = document.getElementById('shield-icon');
+            const title = document.getElementById('shield-title');
+            const desc = document.getElementById('shield-desc');
+            const alertBox = document.getElementById('shield-alert');
+
+            if (reason === "NOT_TELEGRAM") {
+                badge.className = "shield-badge";
+                badge.textContent = "🔒 403 FORBIDDEN • GEEN TELEGRAM SESSIE";
+                icon.textContent = "🛡️";
+                title.textContent = "Toegang Geweigerd";
+                desc.textContent = "Deze directie-applicatie is strikt vertrouwelijk en beveiligd met end-to-end sessieverificatie conform directiemandaat INS-31.";
+                alertBox.innerHTML = "<strong>Toegang via openbare browsers (Safari, Chrome, Desktop) is geblokkeerd.</strong><br><br>" +
+                    "Deze applicatie kan uitsluitend worden geopend binnen de officiële Telegram app via de persoonlijke sessie van <code>@insight1620</code>.<br><br>" +
+                    "<i>Open Telegram op uw telefoon en gebruik de menuknop <b>📱 Cockpit App</b> linksonder.</i>";
+            } else if (reason === "UNAUTHORIZED_USER") {
+                badge.className = "shield-badge";
+                badge.textContent = "⛔ 403 FORBIDDEN • ONBEVOEGDE GEBRUIKER";
+                icon.textContent = "⛔";
+                title.textContent = "Onbevoegd Telegram Account";
+                const userDisplay = user.username ? '@' + user.username : (user.first_name || 'Onbekend');
+                desc.textContent = `U bent ingelogd met Telegram-account: ${userDisplay} (ID: ${user.id}). Dit account heeft geen fiatteer- of inzagerechten voor de directie-omgeving.`;
+                alertBox.innerHTML = "<strong>Geen executive toegang.</strong><br>" +
+                    "Toegang tot de directie-omgeving en schatkist van Insight Labs is exclusief voorbehouden aan de gedelegeerd bestuurder (<code>@insight1620</code>).";
+            } else if (reason === "MISSING_AUTH_TOKEN") {
+                badge.className = "shield-badge warning";
+                badge.textContent = "🔑 SESSIE-AUTHENTICATIE VEREIST";
+                icon.textContent = "🔐";
+                title.textContent = "Sleutel Verificatie Vereist";
+                desc.textContent = "Uw sessie kan niet worden ontgrendeld zonder een actieve directie-authenticatietoken.";
+                alertBox.innerHTML = "<strong>Heropen via Telegram:</strong><br>" +
+                    "Tik in uw 1-op-1 chat met de bot op <code>[ 📱 Open Executive Mini App ]</code> of gebruik de knop linksonder <code>📱 Cockpit App</code>.";
             }
         }
 
-        // Live App State
-        let appState = {
-            treasury: {
-                safeAddress: "0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1",
-                eigenInleg: "€0,00",
-                priveRisico: "€0,00",
-                saldoUsd: "$0,00",
-                saldoEth: "0.0000 ETH",
-                saldoUsdc: "0.00 USDC"
-            },
-            metrics: {
-                doneIssues: 21,
-                totalIssues: 28,
-                activeIssues: 7,
-                progressPct: 75,
-                pendingDecisions: 0
-            },
-            decisions: [
-                {
-                    id: "e17c1fb6-10f4-43a9-bfcb-23289e646dc4",
-                    issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
-                    identifier: "INS-685",
-                    title: "Fusie iOS-team & Realisatie Telegram Mini App",
-                    prompt: "Wilt u dat we het iOS-team samenvoegen met het Telegram-team en starten met de Telegram Mini App & Push-notificaties voor keuzes?",
-                    status: "resolved",
-                    resolvedOption: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties (Bekrachtigd)",
-                    options: [
-                        {
-                            id: "merge_and_build_tma",
-                            label: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties",
-                            desc: "Project 20 wordt samengevoegd met Project 02. Alle capaciteit gaat naar de Telegram Mini App."
-                        }
-                    ]
-                },
-                {
-                    id: "b3ceb3bd-5d1a-40ca-a8d6-218bfcce2541",
-                    issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
-                    identifier: "INS-685",
-                    title: "Mobiele Distributie Strategie",
-                    prompt: "Geen computer (noch Mac noch PC) vereist voor de eigenaar en directie.",
-                    status: "resolved",
-                    resolvedOption: "100% Mobiele Telegram Mini App (Geen PC/Mac vereist)",
-                    options: []
-                }
-            ],
-            tasks: [
-                { identifier: "INS-685", title: "Telegram Mini App & Directie Cockpit", status: "in_review", priority: "urgent" },
-                { identifier: "INS-825", title: "Arbitrum Low-Latency RPC Clustering & WebSocket Monitor", status: "done", priority: "high" },
-                { identifier: "INS-846", title: "Security Telemetrie & Audit Probe Onderdrukking", status: "done", priority: "high" },
-                { identifier: "INS-815", title: "User Input Security & Deduplication Shield", status: "done", priority: "high" },
-                { identifier: "INS-233", title: "Directie Inkomstenwerving & VIP Conversie", status: "done", priority: "medium" },
-                { identifier: "INS-600", title: "Cloud Server & Multi-Node Cluster Integriteit", status: "done", priority: "high" },
-                { identifier: "INS-220", title: "Zero Simulation Policy Handhaving", status: "done", priority: "high" },
-                { identifier: "INS-20", title: "Zero Founder Capital (€0 Inleg) Garantie", status: "done", priority: "high" }
-            ],
-            team: [
-                { name: "Joey", role: "Exec CEO & Directie", dept: "Executive Governance", status: "ONLINE" },
-                { name: "Daan", role: "Lead Telegram Bot", dept: "Project 02", status: "ONLINE" },
-                { name: "Jelmer", role: "Lead TMA Product", dept: "Project 02 (TMA)", status: "ONLINE" },
-                { name: "Florian", role: "Lead TMA Dev", dept: "Project 02 (TMA UI)", status: "ONLINE" },
-                { name: "Rowan", role: "Worker TMA Dev", dept: "Project 02 (Dashboard)", status: "ONLINE" },
-                { name: "Silvan", role: "Worker TMA Dev", dept: "Project 02 (Push Engine)", status: "ONLINE" },
-                { name: "Gerben", role: "Worker TMA Dev", dept: "Project 02 (State Sync)", status: "ONLINE" },
-                { name: "Ramon", role: "Lead TMA IT", dept: "Project 02 (Infra & CDN)", status: "ONLINE" }
-            ],
-            mandates: [
-                { code: "INS-20", title: "Zero Founder Capital", desc: "€0,00 eigen inleg van @insight1620. Alle cloud resources en API-tiers draaien 100% op Always-Free / zero-cost infrastructure." },
-                { code: "INS-220", title: "Zero Simulation Policy", desc: "Geen mock data of gesimuleerde balansen. Uitsluitend geverifieerde real-time on-chain data." },
-                { code: "INS-31", title: "Directie Privacy Shield", desc: "Strikt afgeschermd executive account; alleen @insight1620 heeft fiatteermacht." },
-                { code: "INS-600", title: "Cluster Integriteit", desc: "Gedecentraliseerde server cluster (GCP + OCI) met automatische failover en probe monitoring." }
-            ]
-        };
+        // Hex & Crypto Utilities for Web Crypto API
+        function hexToBytes(hex) {
+            const bytes = new Uint8Array(hex.length / 2);
+            for (let i = 0; i < hex.length; i += 2) {
+                bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+            }
+            return bytes;
+        }
+
+        function extractAuthToken() {
+            // 1. From hash
+            const hashMatch = window.location.hash.match(/[?&#]auth=([a-f0-9]+)/i);
+            if (hashMatch && hashMatch[1]) return hashMatch[1];
+            if (window.location.hash.startsWith('#auth=')) return window.location.hash.substring(6);
+
+            // 2. From query parameter
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.get('auth')) return searchParams.get('auth');
+
+            // 3. From session storage
+            try {
+                const cached = sessionStorage.getItem('tma_executive_auth');
+                if (cached) return cached;
+            } catch (e) {}
+
+            return null;
+        }
+
+        // Live Decrypted App State
+        let appState = null;
+
+        async function decryptPayload(encryptedJson, authToken) {
+            const rawKey = hexToBytes(authToken);
+            const cryptoKey = await window.crypto.subtle.importKey(
+                "raw",
+                rawKey,
+                { name: "AES-GCM" },
+                false,
+                ["decrypt"]
+            );
+
+            const iv = hexToBytes(encryptedJson.iv);
+            const ciphertextWithTag = hexToBytes(encryptedJson.ciphertext);
+
+            const decryptedBuffer = await window.crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: iv, tagLength: 128 },
+                cryptoKey,
+                ciphertextWithTag
+            );
+
+            const decryptedStr = new TextDecoder().decode(decryptedBuffer);
+            return JSON.parse(decryptedStr);
+        }
 
         // Tab Switching
         function switchTab(tabName) {
@@ -798,6 +909,7 @@
 
         // Render Decisions
         function renderDecisions() {
+            if (!appState || !appState.decisions) return;
             const container = document.getElementById('decisions-list');
             const openDecisions = appState.decisions.filter(d => d.status === 'pending');
             
@@ -834,7 +946,6 @@
                 container.appendChild(notice);
             }
 
-            // Render all decisions (open first, then resolved)
             const sorted = [...appState.decisions].sort((a, b) => (a.status === 'pending' ? -1 : 1));
             sorted.forEach(d => {
                 const item = document.createElement('div');
@@ -872,6 +983,7 @@
 
         // Render Tasks
         function renderTasks() {
+            if (!appState || !appState.tasks) return;
             const container = document.getElementById('tasks-list');
             container.innerHTML = '';
             appState.tasks.forEach(t => {
@@ -902,10 +1014,34 @@
             });
         }
 
+        // Render Nodes
+        function renderNodes() {
+            if (!appState || !appState.nodes) return;
+            const container = document.getElementById('nodes-container');
+            container.innerHTML = '';
+            document.getElementById('cluster-node-count').textContent = appState.nodes.length + ' Nodes Actief';
+            appState.nodes.forEach(n => {
+                const row = document.createElement('div');
+                row.className = 'node-row';
+                row.innerHTML = `
+                    <div class="node-meta">
+                        <h4>${n.name} (${n.provider})</h4>
+                        <p>${n.role}</p>
+                    </div>
+                    <div class="node-status">● ${n.latency || '15ms'}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
         // Render Team
         function renderTeam() {
+            if (!appState || !appState.team) return;
             const container = document.getElementById('team-list');
             container.innerHTML = '';
+            if (appState.metrics && appState.metrics.totalAgents) {
+                document.getElementById('val-team-count').textContent = appState.metrics.totalAgents + ' Agents';
+            }
             appState.team.forEach(m => {
                 const row = document.createElement('div');
                 row.className = 'node-row';
@@ -922,6 +1058,7 @@
 
         // Render Mandates
         function renderMandates() {
+            if (!appState || !appState.mandates) return;
             const container = document.getElementById('mandates-list');
             container.innerHTML = '';
             appState.mandates.forEach(m => {
@@ -943,7 +1080,6 @@
 
             showToast('✅ Keuze vastgelegd: ' + label);
 
-            // Update UI locally immediately
             const d = appState.decisions.find(item => item.id === interactionId);
             if (d) {
                 d.status = 'resolved';
@@ -951,7 +1087,6 @@
             }
             renderDecisions();
 
-            // 1. Probeer native Telegram WebApp sendData (werkt bij opening via Keyboard)
             let sendDataSuccess = false;
             try {
                 if (tg && typeof tg.sendData === 'function') {
@@ -968,7 +1103,6 @@
                 console.log("sendData niet ondersteund in deze view mode, fallback naar link");
             }
 
-            // 2. Fallback als sendData niet actief is (bijv. geopend via menu button)
             if (!sendDataSuccess) {
                 const targetUrl = `https://t.me/Insightlabsbot?start=dec_${interactionId}_${optionId}`;
                 if (tg && typeof tg.openTelegramLink === 'function') {
@@ -986,55 +1120,127 @@
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        async function refreshData() {
-            showToast('🔄 Live state verversen...');
-            try {
-                const res = await fetch('./state.json?v=' + Date.now());
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data) {
-                        appState = data;
-                        applyState();
-                    }
-                }
-            } catch (e) {
-                console.log("Using cached state models");
-            }
-        }
-
         function applyState() {
+            if (!appState) return;
+
+            if (appState.treasury) {
+                if (appState.treasury.safeAddress) {
+                    document.getElementById('val-safe-address').textContent = appState.treasury.safeAddress;
+                }
+                if (appState.treasury.eigenInleg) {
+                    document.getElementById('val-eigen-inleg').textContent = appState.treasury.eigenInleg;
+                }
+                if (appState.treasury.priveRisico) {
+                    document.getElementById('val-prive-risico').textContent = appState.treasury.priveRisico;
+                }
+                if (appState.treasury.saldoUsd) {
+                    document.getElementById('val-saldo').textContent = appState.treasury.saldoUsd;
+                }
+                if (appState.treasury.saldoEth && appState.treasury.saldoUsdc) {
+                    document.getElementById('val-saldo-sub').textContent = `${appState.treasury.saldoEth} • ${appState.treasury.saldoUsdc}`;
+                }
+                if (appState.treasury.network) {
+                    document.getElementById('treasury-network').textContent = appState.treasury.network;
+                }
+            }
+
             if (appState.metrics) {
                 document.getElementById('val-done').textContent = `${appState.metrics.doneIssues} / ${appState.metrics.totalIssues}`;
                 document.getElementById('kpi-pct').textContent = `${appState.metrics.progressPct}% Mijlpaal`;
             }
-            if (appState.treasury) {
-                document.getElementById('val-saldo').textContent = appState.treasury.saldoUsd || '$0,00';
-            }
+
+            renderNodes();
             renderDecisions();
             renderTasks();
             renderTeam();
             renderMandates();
         }
 
-        // Check URL hash routing (e.g. #decisions or #tasks)
+        async function refreshData() {
+            showToast('🔄 Live state verversen...');
+            const authToken = extractAuthToken();
+            if (!authToken) {
+                renderLockoutScreen("MISSING_AUTH_TOKEN");
+                return;
+            }
+
+            try {
+                const res = await fetch('./state.json?v=' + Date.now());
+                if (res.ok) {
+                    const rawJson = await res.json();
+                    if (rawJson && rawJson.ciphertext && rawJson.iv) {
+                        appState = await decryptPayload(rawJson, authToken);
+                        applyState();
+                    } else if (rawJson && rawJson.treasury) {
+                        appState = rawJson;
+                        applyState();
+                    }
+                }
+            } catch (e) {
+                console.error("Fout bij ophalen/ontsleutelen van live data:", e);
+                showToast('⚠️ Kon data niet ontsleutelen');
+            }
+        }
+
         function checkHashRoute() {
-            const hash = window.location.hash.replace('#', '').toLowerCase();
-            if (hash === 'decisions' || hash === 'keuzes') {
+            const hash = window.location.hash.toLowerCase();
+            if (hash.includes('decision') || hash.includes('keuze')) {
                 switchTab('decisions');
-            } else if (hash === 'tasks' || hash === 'taken') {
+            } else if (hash.includes('task') || hash.includes('taken')) {
                 switchTab('tasks');
-            } else if (hash === 'team' || hash === 'teams') {
+            } else if (hash.includes('team')) {
                 switchTab('team');
-            } else if (hash === 'governance' || hash === 'directie') {
+            } else if (hash.includes('governance') || hash.includes('directie')) {
                 switchTab('governance');
             }
         }
 
-        // Init on load
-        window.addEventListener('DOMContentLoaded', () => {
-            applyState();
+        // Initialize Authentication & Security Shield
+        async function initApp() {
+            // Check 1: Inside Telegram?
+            if (!isInsideTelegram) {
+                renderLockoutScreen("NOT_TELEGRAM");
+                return;
+            }
+
+            // Check 2: Authorized Executive?
+            if (!isAuthorizedUser) {
+                renderLockoutScreen("UNAUTHORIZED_USER");
+                return;
+            }
+
+            // Check 3: Extract Auth Token for Decryption
+            const authToken = extractAuthToken();
+            if (!authToken) {
+                renderLockoutScreen("MISSING_AUTH_TOKEN");
+                return;
+            }
+
+            // Cache token in session
+            try {
+                sessionStorage.setItem('tma_executive_auth', authToken);
+            } catch (e) {}
+
+            // Success: Unlock UI
+            document.getElementById('shield-screen').style.display = 'none';
+            document.getElementById('app-root').style.display = 'block';
+
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                if (tg.setHeaderColor) tg.setHeaderColor('#0b0f19');
+                if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0f19');
+                if (user) {
+                    document.getElementById('user-display').textContent = user.username ? '@' + user.username : user.first_name;
+                }
+            }
+
+            await refreshData();
             checkHashRoute();
-            refreshData();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
         });
     </script>
 </body>

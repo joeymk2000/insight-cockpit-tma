@@ -1,0 +1,3 @@
+*.bak*
+*.unencrypted*
+encrypt_state.js
