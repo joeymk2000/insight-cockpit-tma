@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="hexGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="100%" stop-color="#00BBF9"/>
+    </linearGradient>
+    <linearGradient id="hexGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F5A0"/>
+      <stop offset="100%" stop-color="#00D9F5"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F141C"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)"/>
+  <g transform="translate(256, 256)" filter="url(#glow)">
+    <!-- Outer Hexagon Outline / Facets -->
+    <path d="M 0,-160 L 138.56,-80 L 138.56,80 L 0,160 L -138.56,80 L -138.56,-80 Z" fill="none" stroke="url(#hexGrad1)" stroke-width="24" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Inner Geometric 'I' and 'L' Stem -->
+    <!-- 'I' stem -->
+    <path d="M -30,-80 L -30,80" stroke="url(#hexGrad2)" stroke-width="26" stroke-linecap="round"/>
+    <!-- 'L' stem and base -->
+    <path d="M 30,-80 L 30,50 L 95,50" fill="none" stroke="url(#hexGrad1)" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+</svg>
