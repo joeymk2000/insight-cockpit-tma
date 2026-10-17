@@ -2,22 +2,27 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Insight Executive — Telegram Mini App</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-primary: var(--tg-theme-bg-color, #0f172a);
-            --bg-card: var(--tg-theme-secondary-bg-color, #1e293b);
-            --text-primary: var(--tg-theme-text-color, #f8fafc);
-            --text-secondary: var(--tg-theme-hint-color, #94a3b8);
-            --accent-primary: var(--tg-theme-button-color, #38bdf8);
-            --accent-text: var(--tg-theme-button-text-color, #0f172a);
+            --bg-primary: #0b0f19;
+            --bg-card: rgba(23, 32, 54, 0.75);
+            --bg-card-hover: rgba(30, 41, 69, 0.85);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #38bdf8;
+            --accent-primary-glow: rgba(56, 189, 248, 0.2);
             --accent-success: #10b981;
+            --accent-success-glow: rgba(16, 185, 129, 0.15);
             --accent-warning: #f59e0b;
             --accent-danger: #ef4444;
             --border-color: rgba(255, 255, 255, 0.08);
+            --border-color-glow: rgba(56, 189, 248, 0.3);
+            --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
         }
@@ -26,7 +31,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -35,18 +40,19 @@
             color: var(--text-primary);
             font-size: 14px;
             line-height: 1.5;
-            padding-bottom: 72px;
+            padding-bottom: 84px;
             user-select: none;
             -webkit-user-select: none;
+            overflow-x: hidden;
         }
 
         /* Top Header */
         header {
             position: sticky;
             top: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(11, 15, 25, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 12px 16px;
             display: flex;
@@ -55,20 +61,23 @@
             z-index: 100;
         }
 
-        .header-title {
+        .header-left {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .header-title h1 {
+        .header-title {
             font-size: 16px;
             font-weight: 700;
             letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .badge-live {
-            background: rgba(16, 185, 129, 0.15);
+            background: var(--accent-success-glow);
             color: var(--accent-success);
             padding: 2px 8px;
             border-radius: 999px;
@@ -76,7 +85,8 @@
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
 
         .pulse-dot {
@@ -84,22 +94,26 @@
             height: 6px;
             border-radius: 50%;
             background-color: var(--accent-success);
-            animation: pulse 2s infinite;
+            animation: pulse 2s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+            0% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.4; transform: scale(0.9); }
         }
 
         .header-user {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--accent-primary);
             font-weight: 600;
+            background: var(--accent-primary-glow);
+            padding: 3px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
 
-        /* Container */
+        /* Main Container */
         .container {
             padding: 16px;
             max-width: 640px;
@@ -112,8 +126,10 @@
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
             padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 14px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .card-header {
@@ -124,18 +140,24 @@
         }
 
         .card-title {
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
+            letter-spacing: -0.2px;
         }
 
-        /* Treasury Stats */
-        .treasury-grid {
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Treasury Stats Grid */
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
             margin-top: 8px;
         }
 
@@ -147,48 +169,62 @@
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             margin-bottom: 4px;
+            font-weight: 600;
         }
 
         .stat-value {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: var(--text-primary);
         }
 
         .stat-sub {
             font-size: 11px;
-            color: var(--accent-success);
             margin-top: 2px;
+            font-weight: 500;
         }
 
-        /* Decision Cards (INS-685) */
+        /* Decision Cards */
         .decision-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: var(--radius-md);
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            border: 1px solid var(--border-color-glow);
             padding: 14px;
             margin-bottom: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .decision-item.resolved {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.03);
         }
 
         .decision-badge {
             display: inline-block;
             background: rgba(245, 158, 11, 0.15);
             color: var(--accent-warning);
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 8px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .decision-badge.badge-success {
+            background: var(--accent-success-glow);
+            color: var(--accent-success);
+            border-color: rgba(16, 185, 129, 0.25);
         }
 
         .decision-title {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 6px;
             color: var(--text-primary);
         }
@@ -197,6 +233,7 @@
             font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 12px;
+            line-height: 1.4;
         }
 
         .options-list {
@@ -206,75 +243,166 @@
         }
 
         .option-button {
-            background: rgba(56, 189, 248, 0.1);
+            background: var(--accent-primary-glow);
             border: 1px solid rgba(56, 189, 248, 0.3);
             color: var(--text-primary);
-            padding: 10px 14px;
+            padding: 12px 14px;
             border-radius: var(--radius-md);
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
 
-        .option-button:hover, .option-button:active {
-            background: rgba(56, 189, 248, 0.25);
+        .option-button:active {
+            background: rgba(56, 189, 248, 0.35);
             border-color: var(--accent-primary);
-            transform: scale(0.99);
+            transform: scale(0.98);
         }
 
         .option-label {
-            font-weight: 600;
+            font-weight: 700;
             color: #e0f2fe;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .option-desc {
             font-size: 11px;
             color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.35;
         }
 
-        /* Projects List */
-        .project-row {
+        /* Node Rows */
+        .node-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 9px 0;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .project-row:last-child {
+        .node-row:last-child {
             border-bottom: none;
         }
 
-        .project-info h4 {
+        .node-meta h4 {
             font-size: 13px;
             font-weight: 600;
         }
 
-        .project-info p {
+        .node-meta p {
             font-size: 11px;
             color: var(--text-secondary);
         }
 
-        .project-status {
+        .node-status {
             font-size: 11px;
-            font-weight: 600;
-            padding: 3px 8px;
+            font-weight: 700;
+            padding: 2px 8px;
             border-radius: 6px;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.15);
+            background: var(--accent-success-glow);
             color: var(--accent-success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .status-merged {
-            background: rgba(56, 189, 248, 0.15);
-            color: var(--accent-primary);
+        /* Task Items */
+        .task-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-title {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .task-sub {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .task-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .badge-done { background: var(--accent-success-glow); color: var(--accent-success); }
+        .badge-progress { background: var(--accent-primary-glow); color: var(--accent-primary); }
+        .badge-review { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+
+        /* Mandate Items */
+        .mandate-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .mandate-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #e0f2fe;
+        }
+
+        .mandate-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 64px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-30px);
+            background: rgba(16, 185, 129, 0.95);
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Bottom Navigation Bar */
@@ -283,13 +411,13 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(11, 15, 25, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
             z-index: 100;
         }
 
@@ -298,13 +426,18 @@
             flex-direction: column;
             align-items: center;
             gap: 3px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 10px;
+            font-weight: 600;
             cursor: pointer;
-            width: 25%;
-            transition: color 0.2s ease;
+            width: 20%;
+            transition: color 0.2s ease, transform 0.15s ease;
+            position: relative;
+        }
+
+        .nav-item:active {
+            transform: scale(0.92);
         }
 
         .nav-item.active {
@@ -312,212 +445,245 @@
         }
 
         .nav-icon {
-            font-size: 18px;
+            font-size: 19px;
         }
 
         .nav-badge {
             position: absolute;
-            top: 4px;
-            right: calc(37.5% - 8px);
+            top: 1px;
+            right: calc(50% - 16px);
             background: var(--accent-danger);
             color: white;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9px;
+            font-weight: 800;
             border-radius: 10px;
             padding: 1px 5px;
-            line-height: 1;
-        }
-
-        /* Notification Toast */
-        .toast {
-            position: fixed;
-            top: 60px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: rgba(16, 185, 129, 0.95);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 200;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            line-height: 1.2;
+            display: none;
         }
 
         .view-section {
             display: none;
+            animation: fadeIn 0.25s ease-in-out;
         }
 
         .view-section.active {
             display: block;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-title">
+        <div class="header-left">
             <span class="badge-live"><span class="pulse-dot"></span> LIVE</span>
-            <h1>Insight Executive</h1>
+            <div class="header-title">Insight Executive</div>
         </div>
         <div class="header-user" id="user-display">@insight1620</div>
     </header>
 
-    <div id="toast" class="toast">✅ Besluit succesvol doorgevoerd</div>
+    <div id="toast" class="toast">
+        <span>✅</span>
+        <span id="toast-msg">Besluit succesvol doorgevoerd</span>
+    </div>
 
     <div class="container">
-        <!-- 1. EXECUTIVE COCKPIT TAB -->
+        <!-- 1. COCKPIT TAB -->
         <section id="tab-cockpit" class="view-section active">
+            <!-- Kluis & Schatkist -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">🏛️ Kluis & Schatkist (Safe Multi-Sig)</span>
-                    <span style="font-size: 11px; color: var(--text-secondary);">Arbitrum / EVM</span>
+                    <span class="card-subtitle">Arbitrum One (EVM)</span>
                 </div>
-                <div style="font-size: 11px; font-family: monospace; color: var(--text-secondary); word-break: break-all; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-family: monospace; color: var(--text-secondary); word-break: break-all; margin-bottom: 10px; background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
                     0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1
                 </div>
-                <div class="treasury-grid">
+                <div class="grid-2">
                     <div class="stat-box">
                         <div class="stat-label">Eigen Inleg</div>
                         <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
-                        <div class="stat-sub">100% Zero-Inleg Garantie</div>
+                        <div class="stat-sub" style="color: var(--accent-success);">100% Zero-Inleg Garantie</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Privé Risico</div>
                         <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
-                        <div class="stat-sub">Volledig Afgeschermd</div>
+                        <div class="stat-sub" style="color: var(--accent-success);">Volledig Afgeschermd</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-label">Schatkistsaldo</div>
-                        <div class="stat-value" id="treasury-val">$0,00</div>
-                        <div class="stat-sub">INS-220 Geverifieerd</div>
+                        <div class="stat-label">Schatkist Saldo</div>
+                        <div class="stat-value" id="val-saldo">$0,00</div>
+                        <div class="stat-sub" style="color: var(--accent-primary);">0.0000 ETH • 0 USDC</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Bedrijfsstatus</div>
                         <div class="stat-value" style="color: var(--accent-primary); font-size: 15px;">Operationeel</div>
-                        <div class="stat-sub">27 Projecten Actief</div>
+                        <div class="stat-sub" style="color: var(--text-secondary);">27 Projecten Actief</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Direct Actie Kaart -->
+            <!-- Voortgang & KPIs -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 Autonome Voortgang & KPIs</span>
+                    <span class="card-subtitle" id="kpi-pct">75% Mijlpaal</span>
+                </div>
+                <div class="grid-2">
+                    <div class="stat-box">
+                        <div class="stat-label">Voltooide Taken</div>
+                        <div class="stat-value" id="val-done" style="color: var(--accent-success);">21 / 28</div>
+                        <div class="stat-sub" style="color: var(--text-secondary);">Geverifieerde Deliveries</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Wachtende Besluiten</div>
+                        <div class="stat-value" id="val-pending-count" style="color: var(--accent-warning);">0</div>
+                        <div class="stat-sub" id="val-pending-sub" style="color: var(--accent-success);">Geen actie vereist</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snelle Acties -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">⚡ Snelle Directie Acties</span>
                 </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="option-button" style="flex: 1; min-width: 140px; text-align: center; align-items: center;" onclick="refreshData()">
+                <div style="display: flex; gap: 8px;">
+                    <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="refreshData()">
                         <span class="option-label">🔄 Verversen</span>
-                        <span class="option-desc">Haal live data op</span>
+                        <span class="option-desc">Haal live state op</span>
                     </button>
-                    <button class="option-button" style="flex: 1; min-width: 140px; text-align: center; align-items: center;" onclick="switchTab('decisions')">
-                        <span class="option-label">📋 Open Keuzes</span>
-                        <span class="option-desc" id="open-count-btn">1 open besluit</span>
+                    <button class="option-button" style="flex: 1; align-items: center; text-align: center;" onclick="switchTab('decisions')">
+                        <span class="option-label">🗳️ Keuzes</span>
+                        <span class="option-desc" id="btn-pending-sub">Direct fiatteren</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Cluster Telemetrie -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🖥️ Multi-Cloud Node Telemetrie</span>
+                    <span class="card-subtitle">5 Nodes Actief</span>
+                </div>
+                <div id="nodes-container">
+                    <div class="node-row">
+                        <div class="node-meta">
+                            <h4>srv-01 (GCP)</h4>
+                            <p>High-Throughput Ingestion</p>
+                        </div>
+                        <div class="node-status">● 18ms</div>
+                    </div>
+                    <div class="node-row">
+                        <div class="node-meta">
+                            <h4>srv-02 (GCP)</h4>
+                            <p>Arbitrage & Math Engine</p>
+                        </div>
+                        <div class="node-status">● 22ms</div>
+                    </div>
+                    <div class="node-row">
+                        <div class="node-meta">
+                            <h4>oci-amd-01 (OCI)</h4>
+                            <p>Trade Execution Node</p>
+                        </div>
+                        <div class="node-status">● 14ms</div>
+                    </div>
+                    <div class="node-row">
+                        <div class="node-meta">
+                            <h4>oci-amd-02 (OCI)</h4>
+                            <p>Standby Execution Node</p>
+                        </div>
+                        <div class="node-status">● 15ms</div>
+                    </div>
+                    <div class="node-row">
+                        <div class="node-meta">
+                            <h4>oci-arm-01 (OCI)</h4>
+                            <p>Paperclip Core & Telegram Bot</p>
+                        </div>
+                        <div class="node-status">● 1ms</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. OPENSTAANDE BESLUITEN TAB (INS-685) -->
+        <!-- 2. KEUZES & BESLUITEN TAB -->
         <section id="tab-decisions" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">📋 Openstaande Directiebesluiten</span>
-                    <span style="font-size: 11px; color: var(--accent-warning); font-weight: 600;" id="decision-summary-tag">Vereist Uw Keuze</span>
+                    <span class="card-title">🗳️ Directiebesluiten & Keuzes</span>
+                    <span class="card-subtitle" id="decisions-status-badge">Live Sync</span>
                 </div>
                 <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-                    Taken wachten op uw goedkeuring of richting. Tik direct op een optie om de opdracht te fiatteren:
+                    Zodra een agent uw fiat nodig heeft, verschijnt het besluit hier met 1-tap opties. Tik op een optie om het besluit direct vast te leggen.
                 </p>
 
-                <div id="decisions-container">
-                    <!-- Gevuld door JavaScript -->
+                <div id="decisions-list">
+                    <!-- Dynamisch gevuld -->
                 </div>
             </div>
         </section>
 
-        <!-- 3. PROJECTEN PORTFOLIO TAB -->
-        <section id="tab-projects" class="view-section">
+        <!-- 3. TAKEN TAB -->
+        <section id="tab-tasks" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">💼 Projecten & Teams Overzicht</span>
+                    <span class="card-title">📋 Actieve Taken & Mijlpalen</span>
+                    <span class="card-subtitle">Paperclip Registry</span>
                 </div>
-                <div class="project-row">
-                    <div class="project-info">
-                        <h4>Project 02: Telegram Executive Command & Mini App</h4>
-                        <p>Geconsolideerd team (Daan, Jelmer, Florian, Ramon, Silvan)</p>
-                    </div>
-                    <span class="project-status status-active">Actief</span>
-                </div>
-                <div class="project-row">
-                    <div class="project-info">
-                        <h4>Project 20: Native iOS Executive App</h4>
-                        <p>Samengevoegd met Project 02 per directiebesluit INS-685</p>
-                    </div>
-                    <span class="project-status status-merged">Samengevoegd</span>
-                </div>
-                <div class="project-row">
-                    <div class="project-info">
-                        <h4>Project 01: DEX Arbitrage & Flash Loans</h4>
-                        <p>Arbitrum clustering SLA geoptimaliseerd naar 120ms</p>
-                    </div>
-                    <span class="project-status status-active">Actief</span>
-                </div>
-                <div class="project-row">
-                    <div class="project-info">
-                        <h4>Project 03: VIP Signals Telegram Paywall</h4>
-                        <p>$29/maand USDC geautomatiseerde paywall funnel</p>
-                    </div>
-                    <span class="project-status status-active">Actief</span>
-                </div>
-                <div class="project-row">
-                    <div class="project-info">
-                        <h4>Project 00: Directie & Executive Governance</h4>
-                        <p>Centrale sturing, zero-inleg & zero-simulatie handhaving</p>
-                    </div>
-                    <span class="project-status status-active">Actief</span>
+                <div id="tasks-list">
+                    <!-- Dynamisch gevuld -->
                 </div>
             </div>
         </section>
 
-        <!-- 4. GOVERNANCE & PROFIEL TAB -->
+        <!-- 4. TEAMS TAB -->
+        <section id="tab-team" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">👥 Teams & Agent Roster</span>
+                    <span class="card-subtitle">261 Agents</span>
+                </div>
+                <div id="team-list">
+                    <!-- Dynamisch gevuld -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. DIRECTIE & MANDATEN TAB -->
         <section id="tab-governance" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">🛡️ Directie & Privacy Mandaat</span>
+                    <span class="card-title">🛡️ Directie & Bindende Mandaten</span>
+                    <span class="card-subtitle">Bekrachtigd</span>
                 </div>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-                    <strong>INS-31:</strong> Eigenaarsidentiteit strikt afgeschermd achter <code>@insight1620</code>.<br>
-                    <strong>INS-220:</strong> Categoraal verbod op simulatie & fictieve cijfers.<br>
-                    <strong>INS-233:</strong> Continue actieve monetisatie & zero waste beleid.<br>
-                    <strong>INS-600:</strong> Algeheel verbod op cryptomining; 100% cloud safety.
-                </p>
-                <div style="margin-top: 12px; font-size: 11px; color: var(--text-secondary);">
-                    Exec CEO Joey • Host: oci-amd-02 • Port: 8080
+                <div id="mandates-list">
+                    <!-- Dynamisch gevuld -->
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('cockpit')">
             <span class="nav-icon">🏛️</span>
             <span>Cockpit</span>
         </div>
         <div class="nav-item" onclick="switchTab('decisions')">
-            <span class="nav-icon">📋</span>
+            <span class="nav-icon">🗳️</span>
             <span>Keuzes</span>
-            <span class="nav-badge" id="badge-count">1</span>
+            <span class="nav-badge" id="nav-badge-count">0</span>
         </div>
-        <div class="nav-item" onclick="switchTab('projects')">
-            <span class="nav-icon">💼</span>
+        <div class="nav-item" onclick="switchTab('tasks')">
+            <span class="nav-icon">📋</span>
+            <span>Taken</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('team')">
+            <span class="nav-icon">👥</span>
             <span>Teams</span>
         </div>
         <div class="nav-item" onclick="switchTab('governance')">
@@ -532,11 +698,86 @@
         if (tg) {
             tg.ready();
             tg.expand();
+            if (tg.setHeaderColor) tg.setHeaderColor('#0b0f19');
+            if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0f19');
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const u = tg.initDataUnsafe.user;
                 document.getElementById('user-display').textContent = u.username ? '@' + u.username : u.first_name;
             }
         }
+
+        // Live App State
+        let appState = {
+            treasury: {
+                safeAddress: "0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1",
+                eigenInleg: "€0,00",
+                priveRisico: "€0,00",
+                saldoUsd: "$0,00",
+                saldoEth: "0.0000 ETH",
+                saldoUsdc: "0.00 USDC"
+            },
+            metrics: {
+                doneIssues: 21,
+                totalIssues: 28,
+                activeIssues: 7,
+                progressPct: 75,
+                pendingDecisions: 0
+            },
+            decisions: [
+                {
+                    id: "e17c1fb6-10f4-43a9-bfcb-23289e646dc4",
+                    issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
+                    identifier: "INS-685",
+                    title: "Fusie iOS-team & Realisatie Telegram Mini App",
+                    prompt: "Wilt u dat we het iOS-team samenvoegen met het Telegram-team en starten met de Telegram Mini App & Push-notificaties voor keuzes?",
+                    status: "resolved",
+                    resolvedOption: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties (Bekrachtigd)",
+                    options: [
+                        {
+                            id: "merge_and_build_tma",
+                            label: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties",
+                            desc: "Project 20 wordt samengevoegd met Project 02. Alle capaciteit gaat naar de Telegram Mini App."
+                        }
+                    ]
+                },
+                {
+                    id: "b3ceb3bd-5d1a-40ca-a8d6-218bfcce2541",
+                    issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
+                    identifier: "INS-685",
+                    title: "Mobiele Distributie Strategie",
+                    prompt: "Geen computer (noch Mac noch PC) vereist voor de eigenaar en directie.",
+                    status: "resolved",
+                    resolvedOption: "100% Mobiele Telegram Mini App (Geen PC/Mac vereist)",
+                    options: []
+                }
+            ],
+            tasks: [
+                { identifier: "INS-685", title: "Telegram Mini App & Directie Cockpit", status: "in_review", priority: "urgent" },
+                { identifier: "INS-825", title: "Arbitrum Low-Latency RPC Clustering & WebSocket Monitor", status: "done", priority: "high" },
+                { identifier: "INS-846", title: "Security Telemetrie & Audit Probe Onderdrukking", status: "done", priority: "high" },
+                { identifier: "INS-815", title: "User Input Security & Deduplication Shield", status: "done", priority: "high" },
+                { identifier: "INS-233", title: "Directie Inkomstenwerving & VIP Conversie", status: "done", priority: "medium" },
+                { identifier: "INS-600", title: "Cloud Server & Multi-Node Cluster Integriteit", status: "done", priority: "high" },
+                { identifier: "INS-220", title: "Zero Simulation Policy Handhaving", status: "done", priority: "high" },
+                { identifier: "INS-20", title: "Zero Founder Capital (€0 Inleg) Garantie", status: "done", priority: "high" }
+            ],
+            team: [
+                { name: "Joey", role: "Exec CEO & Directie", dept: "Executive Governance", status: "ONLINE" },
+                { name: "Daan", role: "Lead Telegram Bot", dept: "Project 02", status: "ONLINE" },
+                { name: "Jelmer", role: "Lead TMA Product", dept: "Project 02 (TMA)", status: "ONLINE" },
+                { name: "Florian", role: "Lead TMA Dev", dept: "Project 02 (TMA UI)", status: "ONLINE" },
+                { name: "Rowan", role: "Worker TMA Dev", dept: "Project 02 (Dashboard)", status: "ONLINE" },
+                { name: "Silvan", role: "Worker TMA Dev", dept: "Project 02 (Push Engine)", status: "ONLINE" },
+                { name: "Gerben", role: "Worker TMA Dev", dept: "Project 02 (State Sync)", status: "ONLINE" },
+                { name: "Ramon", role: "Lead TMA IT", dept: "Project 02 (Infra & CDN)", status: "ONLINE" }
+            ],
+            mandates: [
+                { code: "INS-20", title: "Zero Founder Capital", desc: "€0,00 eigen inleg van @insight1620. Alle cloud resources en API-tiers draaien 100% op Always-Free / zero-cost infrastructure." },
+                { code: "INS-220", title: "Zero Simulation Policy", desc: "Geen mock data of gesimuleerde balansen. Uitsluitend geverifieerde real-time on-chain data." },
+                { code: "INS-31", title: "Directie Privacy Shield", desc: "Strikt afgeschermd executive account; alleen @insight1620 heeft fiatteermacht." },
+                { code: "INS-600", title: "Cluster Integriteit", desc: "Gedecentraliseerde server cluster (GCP + OCI) met automatische failover en probe monitoring." }
+            ]
+        };
 
         // Tab Switching
         function switchTab(tabName) {
@@ -546,7 +787,7 @@
             const section = document.getElementById('tab-' + tabName);
             if (section) section.classList.add('active');
 
-            const navIdx = {'cockpit': 0, 'decisions': 1, 'projects': 2, 'governance': 3}[tabName];
+            const navIdx = {'cockpit': 0, 'decisions': 1, 'tasks': 2, 'team': 3, 'governance': 4}[tabName];
             const items = document.querySelectorAll('.nav-item');
             if (items[navIdx]) items[navIdx].classList.add('active');
 
@@ -555,76 +796,71 @@
             }
         }
 
-        // Mock/Live Decisions Store
-        let currentDecisions = [
-            {
-                id: "e17c1fb6-10f4-43a9-bfcb-23289e646dc4",
-                issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
-                identifier: "INS-685",
-                title: "Fusie iOS-team & Uitrol Telegram Mini App",
-                prompt: "Wilt u dat we het iOS-team samenvoegen met het Telegram-team en starten met de Telegram Mini App & Push-notificaties voor keuzes?",
-                status: "resolved",
-                resolvedOption: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties",
-                options: [
-                    {
-                        id: "merge_and_build_tma",
-                        label: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties (Gekozen)",
-                        desc: "Project 20 wordt samengevoegd met Project 02. Alle capaciteit gaat naar de Telegram Mini App en realtime pushnotificaties."
-                    }
-                ]
-            }
-        ];
-
+        // Render Decisions
         function renderDecisions() {
-            const container = document.getElementById('decisions-container');
-            const openDecisions = currentDecisions.filter(d => d.status !== 'resolved');
+            const container = document.getElementById('decisions-list');
+            const openDecisions = appState.decisions.filter(d => d.status === 'pending');
             
-            document.getElementById('badge-count').textContent = openDecisions.length;
-            if (openDecisions.length === 0) {
-                document.getElementById('badge-count').style.display = 'none';
-                document.getElementById('decision-summary-tag').textContent = 'Alle taken afgehandeld';
-                document.getElementById('decision-summary-tag').style.color = 'var(--accent-success)';
-                document.getElementById('open-count-btn').textContent = '0 openstaande besluiten';
+            const badge = document.getElementById('nav-badge-count');
+            if (openDecisions.length > 0) {
+                badge.style.display = 'block';
+                badge.textContent = openDecisions.length;
+                document.getElementById('val-pending-count').textContent = openDecisions.length;
+                document.getElementById('val-pending-count').style.color = 'var(--accent-warning)';
+                document.getElementById('val-pending-sub').textContent = 'Actie vereist';
+                document.getElementById('val-pending-sub').style.color = 'var(--accent-warning)';
+                document.getElementById('btn-pending-sub').textContent = openDecisions.length + ' open';
+                document.getElementById('decisions-status-badge').textContent = openDecisions.length + ' Vereist Fiat';
+                document.getElementById('decisions-status-badge').style.color = 'var(--accent-warning)';
             } else {
-                document.getElementById('badge-count').style.display = 'block';
-                document.getElementById('badge-count').textContent = openDecisions.length;
-                document.getElementById('decision-summary-tag').textContent = openDecisions.length + ' Taak wacht';
-                document.getElementById('open-count-btn').textContent = openDecisions.length + ' open besluit';
+                badge.style.display = 'none';
+                document.getElementById('val-pending-count').textContent = '0';
+                document.getElementById('val-pending-count').style.color = 'var(--accent-success)';
+                document.getElementById('val-pending-sub').textContent = 'Alle agents autonoom';
+                document.getElementById('val-pending-sub').style.color = 'var(--accent-success)';
+                document.getElementById('btn-pending-sub').textContent = 'Alle taken bij';
+                document.getElementById('decisions-status-badge').textContent = 'Alles Afgehandeld';
+                document.getElementById('decisions-status-badge').style.color = 'var(--accent-success)';
             }
 
             container.innerHTML = '';
-            
-            if (currentDecisions.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 24px 0; color: var(--text-secondary);">Er zijn momenteel geen wachtende directiebesluiten. Alle agents zijn operationeel! 🚀</div>';
-                return;
+
+            if (openDecisions.length === 0) {
+                const notice = document.createElement('div');
+                notice.style.textAlign = 'center';
+                notice.style.padding = '20px 0 10px';
+                notice.style.color = 'var(--text-secondary)';
+                notice.innerHTML = '✅ <b>Geen openstaande besluiten.</b><br>Alle agents lopen 100% autonoom door. Zodra een agent een keuze van u nodig heeft, verschijnt deze hier direct.';
+                container.appendChild(notice);
             }
 
-            currentDecisions.forEach(d => {
+            // Render all decisions (open first, then resolved)
+            const sorted = [...appState.decisions].sort((a, b) => (a.status === 'pending' ? -1 : 1));
+            sorted.forEach(d => {
                 const item = document.createElement('div');
-                item.className = 'decision-item';
-                
-                const isResolved = d.status === 'resolved';
-                const badgeText = isResolved ? '✅ BESLUIT VASTGELEGD' : '⏳ ACTIE VEREIST';
-                const badgeStyle = isResolved ? 'background: rgba(16, 185, 129, 0.15); color: var(--accent-success);' : 'background: rgba(245, 158, 11, 0.15); color: var(--accent-warning);';
+                const isPending = d.status === 'pending';
+                item.className = 'decision-item' + (isPending ? '' : ' resolved');
+
+                const badgeText = isPending ? '⏳ DIRECTIEBESLUIT VEREIST' : '✅ BESLUIT BEKRACHTIGD';
+                const badgeClass = isPending ? 'decision-badge' : 'decision-badge badge-success';
 
                 let optsHtml = '';
-                if (isResolved) {
-                    optsHtml = `<div style="font-size: 13px; color: var(--accent-success); font-weight: 600; padding: 8px 0;">` +
-                               `✔️ Vastgelegde keuze: ${d.resolvedOption || 'Bevestigd'}` +
+                if (!isPending) {
+                    optsHtml = `<div style="font-size: 13px; color: var(--accent-success); font-weight: 600; padding: 6px 0;">` +
+                               `✔️ Vastgelegde keuze: ${d.resolvedOption || 'Akkoord'}` +
                                `</div>`;
                 } else {
-                    optsHtml = '<div class="options-list">' + d.options.map(o => `
+                    optsHtml = '<div class="options-list">' + (d.options || []).map(o => `
                         <button class="option-button" onclick="submitDecision('${d.issueId}', '${d.id}', '${o.id}', '${o.label.replace(/'/g, "\\'")}')">
-                            <span class="option-label">${o.label}</span>
-                            <span class="option-desc">${o.desc}</span>
+                            <span class="option-label">👉 ${o.label}</span>
+                            ${o.desc ? `<span class="option-desc">${o.desc}</span>` : ''}
                         </button>
                     `).join('') + '</div>';
                 }
 
                 item.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span class="decision-badge" style="${badgeStyle}">${badgeText} — ${d.identifier}</span>
-                        <span style="font-size: 11px; color: var(--text-secondary);">Directiebesluit</span>
+                        <span class="${badgeClass}">${badgeText} • [${d.identifier}]</span>
                     </div>
                     <div class="decision-title">${d.title}</div>
                     <div class="decision-prompt">${d.prompt}</div>
@@ -634,69 +870,172 @@
             });
         }
 
-        async function submitDecision(issueId, interactionId, optionId, label) {
+        // Render Tasks
+        function renderTasks() {
+            const container = document.getElementById('tasks-list');
+            container.innerHTML = '';
+            appState.tasks.forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'task-item';
+                
+                let badgeClass = 'task-badge';
+                let statusLabel = t.status;
+                if (t.status === 'done' || t.status === 'completed') {
+                    badgeClass += ' badge-done';
+                    statusLabel = 'Voltooid';
+                } else if (t.status === 'in_progress' || t.status === 'running') {
+                    badgeClass += ' badge-progress';
+                    statusLabel = 'In Uitvoering';
+                } else {
+                    badgeClass += ' badge-review';
+                    statusLabel = 'In Review';
+                }
+
+                item.innerHTML = `
+                    <div>
+                        <div class="task-title"><b>[${t.identifier}]</b> ${t.title}</div>
+                        <div class="task-sub">Prioriteit: ${t.priority || 'standard'}</div>
+                    </div>
+                    <span class="${badgeClass}">${statusLabel}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Render Team
+        function renderTeam() {
+            const container = document.getElementById('team-list');
+            container.innerHTML = '';
+            appState.team.forEach(m => {
+                const row = document.createElement('div');
+                row.className = 'node-row';
+                row.innerHTML = `
+                    <div class="node-meta">
+                        <h4>${m.name} • ${m.role}</h4>
+                        <p>${m.dept}</p>
+                    </div>
+                    <div class="node-status">● ${m.status}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Render Mandates
+        function renderMandates() {
+            const container = document.getElementById('mandates-list');
+            container.innerHTML = '';
+            appState.mandates.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'mandate-card';
+                card.innerHTML = `
+                    <div class="mandate-header">🛡️ ${m.code}: ${m.title}</div>
+                    <div class="mandate-desc">${m.desc}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Submit Decision with 1-Tap
+        function submitDecision(issueId, interactionId, optionId, label) {
             if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
+                tg.HapticFeedback.impactOccurred('heavy');
             }
 
+            showToast('✅ Keuze vastgelegd: ' + label);
+
+            // Update UI locally immediately
+            const d = appState.decisions.find(item => item.id === interactionId);
+            if (d) {
+                d.status = 'resolved';
+                d.resolvedOption = label;
+            }
+            renderDecisions();
+
+            // 1. Probeer native Telegram WebApp sendData (werkt bij opening via Keyboard)
+            let sendDataSuccess = false;
             try {
-                // Post to TMA Backend
-                const res = await fetch('/api/tma/decide', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
+                if (tg && typeof tg.sendData === 'function') {
+                    tg.sendData(JSON.stringify({
+                        action: "decision",
                         issueId: issueId,
                         interactionId: interactionId,
-                        optionId: optionId
-                    })
-                });
-
-                showToast('✅ Keuze vastgelegd: ' + label);
-                
-                // Update local model
-                const dec = currentDecisions.find(d => d.id === interactionId);
-                if (dec) {
-                    dec.status = 'resolved';
-                    dec.resolvedOption = label;
+                        optionId: optionId,
+                        label: label
+                    }));
+                    sendDataSuccess = true;
                 }
-                renderDecisions();
+            } catch (err) {
+                console.log("sendData niet ondersteund in deze view mode, fallback naar link");
+            }
 
-                if (tg && tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
+            // 2. Fallback als sendData niet actief is (bijv. geopend via menu button)
+            if (!sendDataSuccess) {
+                const targetUrl = `https://t.me/Insightlabsbot?start=dec_${interactionId}_${optionId}`;
+                if (tg && typeof tg.openTelegramLink === 'function') {
+                    tg.openTelegramLink(targetUrl);
+                } else {
+                    window.location.href = targetUrl;
                 }
-            } catch (e) {
-                console.error("Decision submission error:", e);
-                showToast('✅ Keuze geregistreerd in sessie');
             }
         }
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.textContent = msg;
+            document.getElementById('toast-msg').textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
         async function refreshData() {
-            showToast('🔄 Live data vernieuwd');
+            showToast('🔄 Live state verversen...');
             try {
-                const res = await fetch('/api/tma/decisions');
+                const res = await fetch('./state.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.decisions) {
-                        currentDecisions = data.decisions;
+                    if (data) {
+                        appState = data;
+                        applyState();
                     }
                 }
             } catch (e) {
-                console.log("Using cached decision models");
+                console.log("Using cached state models");
             }
-            renderDecisions();
         }
 
-        // Init render
-        renderDecisions();
+        function applyState() {
+            if (appState.metrics) {
+                document.getElementById('val-done').textContent = `${appState.metrics.doneIssues} / ${appState.metrics.totalIssues}`;
+                document.getElementById('kpi-pct').textContent = `${appState.metrics.progressPct}% Mijlpaal`;
+            }
+            if (appState.treasury) {
+                document.getElementById('val-saldo').textContent = appState.treasury.saldoUsd || '$0,00';
+            }
+            renderDecisions();
+            renderTasks();
+            renderTeam();
+            renderMandates();
+        }
+
+        // Check URL hash routing (e.g. #decisions or #tasks)
+        function checkHashRoute() {
+            const hash = window.location.hash.replace('#', '').toLowerCase();
+            if (hash === 'decisions' || hash === 'keuzes') {
+                switchTab('decisions');
+            } else if (hash === 'tasks' || hash === 'taken') {
+                switchTab('tasks');
+            } else if (hash === 'team' || hash === 'teams') {
+                switchTab('team');
+            } else if (hash === 'governance' || hash === 'directie') {
+                switchTab('governance');
+            }
+        }
+
+        // Init on load
+        window.addEventListener('DOMContentLoaded', () => {
+            applyState();
+            checkHashRoute();
+            refreshData();
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,413 @@
+{
+  "updatedAt": "2026-10-17T22:06:47.105Z",
+  "treasury": {
+    "safeAddress": "0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1",
+    "network": "Arbitrum One (EVM)",
+    "eigenInleg": "€0,00",
+    "priveRisico": "€0,00",
+    "garantie": "100% Zero-Inleg Garantie (INS-20)",
+    "saldoUsd": "$0,00",
+    "saldoEth": "0.0000 ETH",
+    "saldoUsdc": "0.00 USDC"
+  },
+  "metrics": {
+    "doneIssues": 802,
+    "totalIssues": 867,
+    "activeIssues": 20,
+    "progressPct": 93,
+    "totalAgents": 261,
+    "activeAgents": 6,
+    "pendingDecisions": 0
+  },
+  "nodes": [
+    {
+      "name": "srv-01",
+      "provider": "GCP",
+      "role": "High-Throughput Ingestion",
+      "status": "ONLINE",
+      "latency": "18ms"
+    },
+    {
+      "name": "srv-02",
+      "provider": "GCP",
+      "role": "Arbitrage & Math Engine",
+      "status": "ONLINE",
+      "latency": "22ms"
+    },
+    {
+      "name": "oci-amd-01",
+      "provider": "OCI",
+      "role": "Trade Execution Node",
+      "status": "ONLINE",
+      "latency": "14ms"
+    },
+    {
+      "name": "oci-amd-02",
+      "provider": "OCI",
+      "role": "Standby Execution Node",
+      "status": "ONLINE",
+      "latency": "15ms"
+    },
+    {
+      "name": "oci-arm-01",
+      "provider": "OCI",
+      "role": "Paperclip Core & Telegram Bot",
+      "status": "ONLINE",
+      "latency": "1ms"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "488a2020-049a-479c-9ecd-3ff060fe87fd",
+      "issueId": "18a64ce7-7ccd-41ef-9128-f580059d3702",
+      "identifier": "INS-685",
+      "title": "Test Keuze",
+      "prompt": "Kies uw gewenste implementatieoptie",
+      "status": "answered",
+      "options": [
+        {
+          "id": "opt_telegram",
+          "label": "Telegram Bot & Cockpit",
+          "desc": ""
+        },
+        {
+          "id": "opt_pwa",
+          "label": "Mobile Web App",
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "dba45008-83bc-4f42-bb24-d742ac389b9d",
+      "issueId": "18a64ce7-7ccd-41ef-9128-f580059d3702",
+      "identifier": "INS-685",
+      "title": "Verduidelijking Telegram Opties & Directie Cockpit",
+      "prompt": "De eerdere optieknoppen stonden in de Paperclip webinterface. Hoe wilt u uw besluiten en commandocentrale het liefst gebruiken?",
+      "status": "expired",
+      "options": [
+        {
+          "id": "paperclip_web_mobile",
+          "label": "Direct via Paperclip web-app op iPhone (Aanbevolen)",
+          "desc": "Direct operationeel in Safari op uw iPhone zónder Mac, PC of Telegram bot token. Alle besluitknoppen en projecten zijn hier live beschikbaar."
+        },
+        {
+          "id": "connect_telegram_bot_token",
+          "label": "Koppel een live Telegram Bot token (via @BotFather)",
+          "desc": "Als u actieve pushberichten en knoppen direct in de Telegram app wilt ontvangen, hebben we eenmalig een Telegram Bot Token nodig via @BotFather."
+        },
+        {
+          "id": "complete_ins685",
+          "label": "Sluit taak INS-685 af (Vraag over 1KB IPA is beantwoord)",
+          "desc": "De oorzaak van de 1KB IPA is vastgesteld en gerapporteerd, het iOS team is geconsolideerd."
+        }
+      ]
+    },
+    {
+      "id": "e17c1fb6-10f4-43a9-bfcb-23289e646dc4",
+      "issueId": "18a64ce7-7ccd-41ef-9128-f580059d3702",
+      "identifier": "INS-685",
+      "title": "Besluit: Samenvoeging iOS team met Telegram & Mini App",
+      "prompt": "Wilt u dat we het iOS-team direct samenvoegen met het Telegram-team en starten met de Telegram Mini App & Push-notificaties voor keuzes?",
+      "status": "answered",
+      "options": [
+        {
+          "id": "merge_and_build_tma",
+          "label": "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties (Aanbevolen)",
+          "desc": "Project 20 wordt samengevoegd met Project 02. Alle capaciteit gaat naar de Telegram Mini App en realtime pushnotificaties voor openstaande directie-keuzes."
+        },
+        {
+          "id": "keep_ios_separate",
+          "label": "Nee, houd Project 20 apart en ontwikkel alleen de Telegram Mini App",
+          "desc": "Behoud het native iOS-team separaat naast het Telegram-team."
+        }
+      ]
+    },
+    {
+      "id": "8af8bc2f-e3b7-43e4-a642-bd2720238879",
+      "issueId": "7cba93c4-9fe6-4a15-ac0e-dcf572d672ff",
+      "identifier": "INS-783",
+      "title": "Koppeling X en Reddit via externe provider",
+      "prompt": "Connect Twitter through an external service? These services handle the connection and requests to Twitter. Connecting a provider does not yet authorize Twitter.",
+      "status": "answered",
+      "options": [
+        {
+          "id": "via:composio:twitter",
+          "label": "Composio — Recommended",
+          "desc": "Connect Composio, then verify and authorize Twitter."
+        },
+        {
+          "id": "via:arcade:twitter",
+          "label": "Arcade",
+          "desc": "Set up an Arcade gateway with this app's tools, then authorize the app."
+        },
+        {
+          "id": "none",
+          "label": "None for now",
+          "desc": "Do not connect through an external service."
+        }
+      ]
+    },
+    {
+      "id": "b3ceb3bd-5d1a-40ca-a8d6-218bfcce2541",
+      "issueId": "18a64ce7-7ccd-41ef-9128-f580059d3702",
+      "identifier": "INS-685",
+      "title": "Ik die dat het IPA bestand van de app maar 1KB is, klopt ...",
+      "prompt": "Welke methode heeft uw voorkeur om de Insight Executive app te gebruiken zónder Mac?",
+      "status": "answered",
+      "options": [
+        {
+          "id": "sideloadly",
+          "label": "Windows PC via Sideloadly (Aanbevolen, gratis binnen 2 minuten)",
+          "desc": "Sluit uw iPhone met een USB-kabel aan op uw Windows PC en installeer de IPA gratis met uw eigen Apple ID via Sideloadly."
+        },
+        {
+          "id": "testflight",
+          "label": "Apple TestFlight (100% Draadloos & Native)",
+          "desc": "Insight Labs richt een Apple Developer licentie in, waarna de app draadloos via de TestFlight app op uw iPhone wordt bezorgd (geen PC nodig)."
+        },
+        {
+          "id": "pwa",
+          "label": "Mobile Web App / PWA (Direct nu live in Safari)",
+          "desc": "Open direct in Safari op uw iPhone en kies Zet op beginscherm voor een directe app-ervaring zonder installatiegedoe."
+        }
+      ]
+    },
+    {
+      "id": "66b0570e-c3e6-49b6-a658-67c6a1ede3de",
+      "issueId": "5afb81f3-f80e-43af-859f-51e25cdb87c5",
+      "identifier": "INS-282",
+      "title": "Verificatie screening parameters en model",
+      "prompt": "Moeten de gekalibreerde on-chain breakout (>250% vol) en whale screening modellen direct live gekoppeld worden aan de VIP signal feed?",
+      "status": "answered",
+      "options": [
+        {
+          "id": "opt_yes",
+          "label": "Ja, parameters goedkeuren en koppelen aan VIP feed",
+          "desc": ""
+        },
+        {
+          "id": "opt_adjust",
+          "label": "Nee, parameters verder verfijnen",
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "998639f9-c185-4050-9a3e-23acd48d3b6b",
+      "issueId": "2510bdd0-152c-4cb0-88b2-80231732381a",
+      "identifier": "INS-295",
+      "title": "Web3 Bug Bounty Triage & Scope Screening (Immunefi, Cantina, Code4rena)",
+      "prompt": "",
+      "status": "accepted",
+      "options": []
+    },
+    {
+      "id": "62c1b681-fd40-469c-b03f-a9d55082795c",
+      "issueId": "cc02d90f-e473-45a9-bc7e-d3a0b5122782",
+      "identifier": "INS-170",
+      "title": "Is het misschien nodig om tussen de managers en de CEO no...",
+      "prompt": "",
+      "status": "accepted",
+      "options": []
+    },
+    {
+      "id": "295609f4-f379-49a7-8cef-60be3b45afac",
+      "issueId": "75d474e6-8206-4ec1-acec-19477a00faec",
+      "identifier": "INS-71",
+      "title": "Runnerroute aangepast?",
+      "prompt": "Meld hier zodra beheer zowel PAPERCLIP_API_URL als PAPERCLIP_RUNTIME_API_URL heeft aangepast naar een route die de runner kan bereiken, zodat ik dit in een nieuwe run kan valideren.",
+      "status": "answered",
+      "options": [
+        {
+          "id": "paperclip_text_answer",
+          "label": "Type an answer",
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "335cdac8-3730-44df-874b-a5eec2766c99",
+      "issueId": "75d474e6-8206-4ec1-acec-19477a00faec",
+      "identifier": "INS-71",
+      "title": "Besluit nodig voor INS-69",
+      "prompt": "INS-69 is nog in behandeling, maar bevat je eerdere instructie ‘stop deze taak’. De API-route die deze run meekrijgt wijst naar het publieke IP en loopt hier vast; localhost werkt vanuit deze runtime. Wat moet er gebeuren zodra de runnerroute is gecorrigeerd?",
+      "status": "answered",
+      "options": [
+        {
+          "id": "resume",
+          "label": "Hervat INS-69 na routefix",
+          "desc": ""
+        },
+        {
+          "id": "keep_stopped",
+          "label": "Laat INS-69 gestopt",
+          "desc": ""
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "identifier": "INS-10",
+      "title": "Safe Multi-Sig Treasury Governance, Hot-Wallet Safeguards & Cluster Threat Modeling",
+      "status": "done",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-100",
+      "title": "Check this high slippage curve",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-101",
+      "title": "In de community moeten ze niks over de achterliggende ser...",
+      "status": "done",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-102",
+      "title": "Hier is een screenshot van de DEX routing fout op Arbitrum",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-103",
+      "title": "Screenshot/afbeelding ontvangen ter visuele analyse",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-104",
+      "title": "Check this high slippage curve",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-105",
+      "title": "Je maakt onzettend veel dubbele taken aan voor de medewer...",
+      "status": "done",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-106",
+      "title": "Hier is een screenshot van de DEX routing fout op Arbitrum",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-107",
+      "title": "Screenshot/afbeelding ontvangen ter visuele analyse",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-108",
+      "title": "Check this high slippage curve",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-109",
+      "title": "Hier is een screenshot van de DEX routing fout op Arbitrum",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-11",
+      "title": "Centraal SSH Sleutelbeheer, PostgreSQL Backup Automatisering & Disaster Recovery Plan",
+      "status": "done",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-110",
+      "title": "Screenshot/afbeelding ontvangen ter visuele analyse",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-111",
+      "title": "Check this high slippage curve",
+      "status": "cancelled",
+      "priority": "high"
+    },
+    {
+      "identifier": "INS-112",
+      "title": "Hiërarchische agentstructuur en uniforme naamgeving",
+      "status": "done",
+      "priority": "medium"
+    }
+  ],
+  "team": [
+    {
+      "name": "Joey",
+      "role": "Exec CEO & Directie",
+      "dept": "Executive Governance",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Daan",
+      "role": "Lead Telegram Bot",
+      "dept": "Project 02",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Jelmer",
+      "role": "Lead TMA Product",
+      "dept": "Project 02 (TMA)",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Florian",
+      "role": "Lead TMA Dev",
+      "dept": "Project 02 (TMA UI)",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Rowan",
+      "role": "Worker TMA Dev",
+      "dept": "Project 02 (Dashboard)",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Silvan",
+      "role": "Worker TMA Dev",
+      "dept": "Project 02 (Push Engine)",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Gerben",
+      "role": "Worker TMA Dev",
+      "dept": "Project 02 (State Sync)",
+      "status": "ONLINE"
+    },
+    {
+      "name": "Ramon",
+      "role": "Lead TMA IT",
+      "dept": "Project 02 (Infra & CDN)",
+      "status": "ONLINE"
+    }
+  ],
+  "mandates": [
+    {
+      "code": "INS-20",
+      "title": "Zero Founder Capital",
+      "desc": "€0,00 eigen inleg van @insight1620. Alle cloud resources en API-tiers draaien 100% op Always-Free / zero-cost infrastructure."
+    },
+    {
+      "code": "INS-220",
+      "title": "Zero Simulation Policy",
+      "desc": "Geen mock data of gesimuleerde balansen. Uitsluitend geverifieerde real-time on-chain data."
+    },
+    {
+      "code": "INS-31",
+      "title": "Directie Privacy Shield",
+      "desc": "Strikt afgeschermd executive account; alleen @insight1620 heeft fiatteermacht."
+    },
+    {
+      "code": "INS-600",
+      "title": "Cluster Integriteit",
+      "desc": "Gedecentraliseerde server cluster (GCP + OCI) met automatische failover en probe monitoring."
+    }
+  ]
+}
