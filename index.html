@@ -685,6 +685,28 @@
                         <!-- Dynamisch geladen na decryptie -->
                     </div>
                 </div>
+
+                <!-- DEX Sniper & Smart Routing Hub -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">⚡ DEX Sniper &amp; Smart Routing Hub</span>
+                        <span class="card-subtitle" id="trading-status-badge">100% On-Chain</span>
+                    </div>
+                    <div id="trading-container">
+                        <!-- Dynamisch geladen na decryptie -->
+                    </div>
+                </div>
+
+                <!-- Handelspartners & 20% RevShare -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🎁 Handelspartners &amp; RevShare</span>
+                        <span class="card-subtitle">20% Commissie</span>
+                    </div>
+                    <div id="growth-container">
+                        <!-- Dynamisch geladen na decryptie -->
+                    </div>
+                </div>
             </section>
 
             <!-- 2. KEUZES & BESLUITEN TAB -->
@@ -738,6 +760,17 @@
                         <span class="card-subtitle">Bekrachtigd</span>
                     </div>
                     <div id="mandates-list">
+                        <!-- Dynamisch gevuld na decryptie -->
+                    </div>
+                </div>
+
+                <!-- Veelgestelde Vragen & Directiebeleid (FAQ) -->
+                <div class="card" style="margin-top: 14px;">
+                    <div class="card-header">
+                        <span class="card-title">📖 Veelgestelde Vragen &amp; Directiebeleid</span>
+                        <span class="card-subtitle">INS-20 &amp; INS-31</span>
+                    </div>
+                    <div id="faq-list">
                         <!-- Dynamisch gevuld na decryptie -->
                     </div>
                 </div>
@@ -1072,6 +1105,130 @@
             });
         }
 
+        // Render Trading & DEX Sniper Hub
+        function renderTrading() {
+            if (!appState || !appState.trading) return;
+            const container = document.getElementById('trading-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const t = appState.trading;
+            if (t.sniper) {
+                const s = t.sniper;
+                const sniperDiv = document.createElement('div');
+                sniperDiv.style.marginBottom = '10px';
+                sniperDiv.innerHTML = `
+                    <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 700; color: var(--accent-primary); font-size: 13px;">🎯 ${s.activePair} (${s.chain})</span>
+                            <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: var(--accent-success); padding: 2px 6px; border-radius: 4px; font-weight: 600;">MEV Shield Actief</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+                            • Router: <b>${s.route}</b><br>
+                            • Slippage: <b>${s.activeSlippage}</b> (Dynamic Adaptive)<br>
+                            • Bytecode Audit: <b style="color: var(--accent-success);">${s.honeypotCheck}</b><br>
+                            • Schatkist Inkomsten: <b style="color: var(--accent-primary);">1% Protocol Fee direct naar Safe Multi-Sig</b>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(sniperDiv);
+            }
+
+            if (t.arbitrage && t.arbitrage.length > 0) {
+                const title = document.createElement('div');
+                title.style.fontSize = '12px';
+                title.style.fontWeight = '700';
+                title.style.color = 'var(--text-secondary)';
+                title.style.margin = '8px 0 4px';
+                title.textContent = '⚡ Live Arbitrage Kansen & Signalen:';
+                container.appendChild(title);
+
+                t.arbitrage.forEach(a => {
+                    const row = document.createElement('div');
+                    row.className = 'node-row';
+                    row.innerHTML = `
+                        <div class="node-meta">
+                            <h4>${a.pair} • <span style="color: var(--accent-success);">${a.spread}</span></h4>
+                            <p>${a.buyDex} ➔ ${a.sellDex} (Est: ${a.netProfitUsd})</p>
+                        </div>
+                        <div class="node-status" style="color: var(--accent-primary);">● ${a.status}</div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+        }
+
+        // Render Growth & Partners
+        function renderGrowth() {
+            if (!appState || !appState.growth) return;
+            const container = document.getElementById('growth-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const g = appState.growth;
+            if (g.referral) {
+                const ref = g.referral;
+                const refBox = document.createElement('div');
+                refBox.style.marginBottom = '10px';
+                refBox.innerHTML = `
+                    <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 700; color: #f59e0b; font-size: 13px;">🎁 ${ref.revShare}</span>
+                            <span style="font-size: 11px; color: var(--accent-success); font-weight: 600;">${ref.activeTier}</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 6px;">
+                            Verdien 20% van alle trading fees en VIP abonnementen direct uitgekeerd aan de Safe Treasury.
+                        </div>
+                        <div style="font-size: 11px; font-family: monospace; color: var(--accent-primary); word-break: break-all; background: rgba(0,0,0,0.4); padding: 5px 8px; border-radius: 4px;">
+                            ${ref.link}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(refBox);
+            }
+
+            if (g.partners && g.partners.length > 0) {
+                const partnerTitle = document.createElement('div');
+                partnerTitle.style.fontSize = '12px';
+                partnerTitle.style.fontWeight = '700';
+                partnerTitle.style.color = 'var(--text-secondary)';
+                partnerTitle.style.margin = '8px 0 4px';
+                partnerTitle.textContent = '🔗 Officiële Handelspartners:';
+                container.appendChild(partnerTitle);
+
+                g.partners.forEach(p => {
+                    const row = document.createElement('div');
+                    row.className = 'node-row';
+                    row.innerHTML = `
+                        <div class="node-meta">
+                            <h4>${p.name}</h4>
+                            <p>${p.desc}</p>
+                        </div>
+                        <div class="node-status" style="color: var(--accent-success); font-weight: 600;">${p.perk}</div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+        }
+
+        // Render FAQ
+        function renderFaq() {
+            if (!appState || !appState.faq) return;
+            const container = document.getElementById('faq-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            appState.faq.forEach(f => {
+                const card = document.createElement('div');
+                card.className = 'mandate-card';
+                card.innerHTML = `
+                    <div class="mandate-header" style="color: var(--accent-primary);">❓ ${f.q}</div>
+                    <div class="mandate-desc">${f.a}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         // Submit Decision with 1-Tap
         function submitDecision(issueId, interactionId, optionId, label) {
             if (tg && tg.HapticFeedback) {
@@ -1154,6 +1311,9 @@
             renderTasks();
             renderTeam();
             renderMandates();
+            renderTrading();
+            renderGrowth();
+            renderFaq();
         }
 
         async function refreshData() {
