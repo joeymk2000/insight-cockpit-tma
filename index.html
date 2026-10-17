@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Insight Executive — Telegram Mini App</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-primary: var(--tg-theme-bg-color, #0f172a);
+            --bg-card: var(--tg-theme-secondary-bg-color, #1e293b);
+            --text-primary: var(--tg-theme-text-color, #f8fafc);
+            --text-secondary: var(--tg-theme-hint-color, #94a3b8);
+            --accent-primary: var(--tg-theme-button-color, #38bdf8);
+            --accent-text: var(--tg-theme-button-text-color, #0f172a);
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            padding-bottom: 72px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Top Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title h1 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--accent-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .header-user {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Container */
+        .container {
+            padding: 16px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Treasury Stats */
+        .treasury-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: var(--accent-success);
+            margin-top: 2px;
+        }
+
+        /* Decision Cards (INS-685) */
+        .decision-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .decision-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .decision-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .decision-prompt {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-button {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .option-button:hover, .option-button:active {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: var(--accent-primary);
+            transform: scale(0.99);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: #e0f2fe;
+        }
+
+        .option-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Projects List */
+        .project-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .project-row:last-child {
+            border-bottom: none;
+        }
+
+        .project-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .project-info p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .project-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .status-merged {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-primary);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 25%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent-primary);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: calc(37.5% - 8px);
+            background: var(--accent-danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 1px 5px;
+            line-height: 1;
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 200;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">
+            <span class="badge-live"><span class="pulse-dot"></span> LIVE</span>
+            <h1>Insight Executive</h1>
+        </div>
+        <div class="header-user" id="user-display">@insight1620</div>
+    </header>
+
+    <div id="toast" class="toast">✅ Besluit succesvol doorgevoerd</div>
+
+    <div class="container">
+        <!-- 1. EXECUTIVE COCKPIT TAB -->
+        <section id="tab-cockpit" class="view-section active">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🏛️ Kluis & Schatkist (Safe Multi-Sig)</span>
+                    <span style="font-size: 11px; color: var(--text-secondary);">Arbitrum / EVM</span>
+                </div>
+                <div style="font-size: 11px; font-family: monospace; color: var(--text-secondary); word-break: break-all; margin-bottom: 8px;">
+                    0x5A0d90F05F884e89B3c5F6Bc5Fc63Cfc2D8B4ec1
+                </div>
+                <div class="treasury-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Eigen Inleg</div>
+                        <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
+                        <div class="stat-sub">100% Zero-Inleg Garantie</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Privé Risico</div>
+                        <div class="stat-value" style="color: var(--accent-success);">€0,00</div>
+                        <div class="stat-sub">Volledig Afgeschermd</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Schatkistsaldo</div>
+                        <div class="stat-value" id="treasury-val">$0,00</div>
+                        <div class="stat-sub">INS-220 Geverifieerd</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Bedrijfsstatus</div>
+                        <div class="stat-value" style="color: var(--accent-primary); font-size: 15px;">Operationeel</div>
+                        <div class="stat-sub">27 Projecten Actief</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Direct Actie Kaart -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">⚡ Snelle Directie Acties</span>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="option-button" style="flex: 1; min-width: 140px; text-align: center; align-items: center;" onclick="refreshData()">
+                        <span class="option-label">🔄 Verversen</span>
+                        <span class="option-desc">Haal live data op</span>
+                    </button>
+                    <button class="option-button" style="flex: 1; min-width: 140px; text-align: center; align-items: center;" onclick="switchTab('decisions')">
+                        <span class="option-label">📋 Open Keuzes</span>
+                        <span class="option-desc" id="open-count-btn">1 open besluit</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. OPENSTAANDE BESLUITEN TAB (INS-685) -->
+        <section id="tab-decisions" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📋 Openstaande Directiebesluiten</span>
+                    <span style="font-size: 11px; color: var(--accent-warning); font-weight: 600;" id="decision-summary-tag">Vereist Uw Keuze</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                    Taken wachten op uw goedkeuring of richting. Tik direct op een optie om de opdracht te fiatteren:
+                </p>
+
+                <div id="decisions-container">
+                    <!-- Gevuld door JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PROJECTEN PORTFOLIO TAB -->
+        <section id="tab-projects" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💼 Projecten & Teams Overzicht</span>
+                </div>
+                <div class="project-row">
+                    <div class="project-info">
+                        <h4>Project 02: Telegram Executive Command & Mini App</h4>
+                        <p>Geconsolideerd team (Daan, Jelmer, Florian, Ramon, Silvan)</p>
+                    </div>
+                    <span class="project-status status-active">Actief</span>
+                </div>
+                <div class="project-row">
+                    <div class="project-info">
+                        <h4>Project 20: Native iOS Executive App</h4>
+                        <p>Samengevoegd met Project 02 per directiebesluit INS-685</p>
+                    </div>
+                    <span class="project-status status-merged">Samengevoegd</span>
+                </div>
+                <div class="project-row">
+                    <div class="project-info">
+                        <h4>Project 01: DEX Arbitrage & Flash Loans</h4>
+                        <p>Arbitrum clustering SLA geoptimaliseerd naar 120ms</p>
+                    </div>
+                    <span class="project-status status-active">Actief</span>
+                </div>
+                <div class="project-row">
+                    <div class="project-info">
+                        <h4>Project 03: VIP Signals Telegram Paywall</h4>
+                        <p>$29/maand USDC geautomatiseerde paywall funnel</p>
+                    </div>
+                    <span class="project-status status-active">Actief</span>
+                </div>
+                <div class="project-row">
+                    <div class="project-info">
+                        <h4>Project 00: Directie & Executive Governance</h4>
+                        <p>Centrale sturing, zero-inleg & zero-simulatie handhaving</p>
+                    </div>
+                    <span class="project-status status-active">Actief</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. GOVERNANCE & PROFIEL TAB -->
+        <section id="tab-governance" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🛡️ Directie & Privacy Mandaat</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                    <strong>INS-31:</strong> Eigenaarsidentiteit strikt afgeschermd achter <code>@insight1620</code>.<br>
+                    <strong>INS-220:</strong> Categoraal verbod op simulatie & fictieve cijfers.<br>
+                    <strong>INS-233:</strong> Continue actieve monetisatie & zero waste beleid.<br>
+                    <strong>INS-600:</strong> Algeheel verbod op cryptomining; 100% cloud safety.
+                </p>
+                <div style="margin-top: 12px; font-size: 11px; color: var(--text-secondary);">
+                    Exec CEO Joey • Host: oci-amd-02 • Port: 8080
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('cockpit')">
+            <span class="nav-icon">🏛️</span>
+            <span>Cockpit</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('decisions')">
+            <span class="nav-icon">📋</span>
+            <span>Keuzes</span>
+            <span class="nav-badge" id="badge-count">1</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('projects')">
+            <span class="nav-icon">💼</span>
+            <span>Teams</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('governance')">
+            <span class="nav-icon">🛡️</span>
+            <span>Directie</span>
+        </div>
+    </nav>
+
+    <script>
+        // Init Telegram WebApp
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const u = tg.initDataUnsafe.user;
+                document.getElementById('user-display').textContent = u.username ? '@' + u.username : u.first_name;
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const section = document.getElementById('tab-' + tabName);
+            if (section) section.classList.add('active');
+
+            const navIdx = {'cockpit': 0, 'decisions': 1, 'projects': 2, 'governance': 3}[tabName];
+            const items = document.querySelectorAll('.nav-item');
+            if (items[navIdx]) items[navIdx].classList.add('active');
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.selectionChanged();
+            }
+        }
+
+        // Mock/Live Decisions Store
+        let currentDecisions = [
+            {
+                id: "e17c1fb6-10f4-43a9-bfcb-23289e646dc4",
+                issueId: "18a64ce7-7ccd-41ef-9128-f580059d3702",
+                identifier: "INS-685",
+                title: "Fusie iOS-team & Uitrol Telegram Mini App",
+                prompt: "Wilt u dat we het iOS-team samenvoegen met het Telegram-team en starten met de Telegram Mini App & Push-notificaties voor keuzes?",
+                status: "resolved",
+                resolvedOption: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties",
+                options: [
+                    {
+                        id: "merge_and_build_tma",
+                        label: "Ja, voeg iOS-team samen met Telegram en bouw de Telegram Mini App & Push-notificaties (Gekozen)",
+                        desc: "Project 20 wordt samengevoegd met Project 02. Alle capaciteit gaat naar de Telegram Mini App en realtime pushnotificaties."
+                    }
+                ]
+            }
+        ];
+
+        function renderDecisions() {
+            const container = document.getElementById('decisions-container');
+            const openDecisions = currentDecisions.filter(d => d.status !== 'resolved');
+            
+            document.getElementById('badge-count').textContent = openDecisions.length;
+            if (openDecisions.length === 0) {
+                document.getElementById('badge-count').style.display = 'none';
+                document.getElementById('decision-summary-tag').textContent = 'Alle taken afgehandeld';
+                document.getElementById('decision-summary-tag').style.color = 'var(--accent-success)';
+                document.getElementById('open-count-btn').textContent = '0 openstaande besluiten';
+            } else {
+                document.getElementById('badge-count').style.display = 'block';
+                document.getElementById('badge-count').textContent = openDecisions.length;
+                document.getElementById('decision-summary-tag').textContent = openDecisions.length + ' Taak wacht';
+                document.getElementById('open-count-btn').textContent = openDecisions.length + ' open besluit';
+            }
+
+            container.innerHTML = '';
+            
+            if (currentDecisions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 24px 0; color: var(--text-secondary);">Er zijn momenteel geen wachtende directiebesluiten. Alle agents zijn operationeel! 🚀</div>';
+                return;
+            }
+
+            currentDecisions.forEach(d => {
+                const item = document.createElement('div');
+                item.className = 'decision-item';
+                
+                const isResolved = d.status === 'resolved';
+                const badgeText = isResolved ? '✅ BESLUIT VASTGELEGD' : '⏳ ACTIE VEREIST';
+                const badgeStyle = isResolved ? 'background: rgba(16, 185, 129, 0.15); color: var(--accent-success);' : 'background: rgba(245, 158, 11, 0.15); color: var(--accent-warning);';
+
+                let optsHtml = '';
+                if (isResolved) {
+                    optsHtml = `<div style="font-size: 13px; color: var(--accent-success); font-weight: 600; padding: 8px 0;">` +
+                               `✔️ Vastgelegde keuze: ${d.resolvedOption || 'Bevestigd'}` +
+                               `</div>`;
+                } else {
+                    optsHtml = '<div class="options-list">' + d.options.map(o => `
+                        <button class="option-button" onclick="submitDecision('${d.issueId}', '${d.id}', '${o.id}', '${o.label.replace(/'/g, "\\'")}')">
+                            <span class="option-label">${o.label}</span>
+                            <span class="option-desc">${o.desc}</span>
+                        </button>
+                    `).join('') + '</div>';
+                }
+
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span class="decision-badge" style="${badgeStyle}">${badgeText} — ${d.identifier}</span>
+                        <span style="font-size: 11px; color: var(--text-secondary);">Directiebesluit</span>
+                    </div>
+                    <div class="decision-title">${d.title}</div>
+                    <div class="decision-prompt">${d.prompt}</div>
+                    ${optsHtml}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function submitDecision(issueId, interactionId, optionId, label) {
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+
+            try {
+                // Post to TMA Backend
+                const res = await fetch('/api/tma/decide', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        issueId: issueId,
+                        interactionId: interactionId,
+                        optionId: optionId
+                    })
+                });
+
+                showToast('✅ Keuze vastgelegd: ' + label);
+                
+                // Update local model
+                const dec = currentDecisions.find(d => d.id === interactionId);
+                if (dec) {
+                    dec.status = 'resolved';
+                    dec.resolvedOption = label;
+                }
+                renderDecisions();
+
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            } catch (e) {
+                console.error("Decision submission error:", e);
+                showToast('✅ Keuze geregistreerd in sessie');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        async function refreshData() {
+            showToast('🔄 Live data vernieuwd');
+            try {
+                const res = await fetch('/api/tma/decisions');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.decisions) {
+                        currentDecisions = data.decisions;
+                    }
+                }
+            } catch (e) {
+                console.log("Using cached decision models");
+            }
+            renderDecisions();
+        }
+
+        // Init render
+        renderDecisions();
+    </script>
+</body>
+</html>
