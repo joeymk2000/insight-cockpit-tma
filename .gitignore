@@ -1,3 +1,4 @@
 *.bak*
 *.unencrypted*
 encrypt_state.js
+sync_live_state.js
