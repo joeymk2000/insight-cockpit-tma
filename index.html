@@ -770,12 +770,17 @@
                 <img src="favicon.svg" alt="Insight Labs" class="brand-logo">
                 <div>
                     <div class="brand-title">Insight Executive</div>
-                    <div class="brand-sub">Directie Cockpit &amp; Besluiten</div>
+                    <div class="brand-sub">Directie Cockpit &amp; Besluiten <span style="font-size: 9px; background: rgba(56, 189, 248, 0.25); color: var(--accent-primary); padding: 1px 5px; border-radius: 4px; font-weight: 700; margin-left: 4px; border: 1px solid rgba(56,189,248,0.4);">v2.5.0-LIVE</span></div>
                 </div>
             </div>
-            <div class="user-status">
-                <span class="pulse-dot"></span>
-                <span id="user-display">@insight1620</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="forceHardRefresh()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    🔄 Cache Legen
+                </button>
+                <div class="user-status">
+                    <span class="pulse-dot"></span>
+                    <span id="user-display">@insight1620</span>
+                </div>
             </div>
         </header>
 
@@ -1033,6 +1038,24 @@
                     </div>
                 </div>
 
+                <!-- Quick Navigation to Live Trades & PnL Dashboard (INS-1861) -->
+                <div class="card" style="margin-bottom: 12px; cursor: pointer; border-color: rgba(16, 185, 129, 0.4); background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.7)); box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);" onclick="switchTab('trades')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 10px; font-weight: 700; color: var(--accent-success); text-transform: uppercase; letter-spacing: 0.5px;">
+                                📈 Quantitative Trading Dashboard
+                            </div>
+                            <div style="font-size: 15px; font-weight: 800; color: #fff; margin: 3px 0;">
+                                4 Lopende Trades • +$4,16 Ongerealiseerde PnL
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">
+                                Bekijk realtime trades &amp; overzicht per trade van winst en verlies ➔
+                            </div>
+                        </div>
+                        <div style="font-size: 26px; margin-left: 8px;">📈</div>
+                    </div>
+                </div>
+
                 <!-- DEX Sniper & Smart Routing Hub -->
                 <div class="card">
                     <div class="card-header">
@@ -1052,6 +1075,81 @@
                     </div>
                     <div id="growth-container">
                         <!-- Dynamisch geladen na decryptie -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. TRADES DASHBOARD TAB (INS-1861) -->
+            <section id="tab-trades" class="view-section">
+                <!-- Summary Card: Live Trading KPIs -->
+                <div class="card" style="margin-bottom: 12px; border-color: rgba(56, 189, 248, 0.3);">
+                    <div class="card-header">
+                        <div>
+                            <span class="card-title">📈 Live Quantitative Trading Dashboard</span>
+                            <div style="font-size: 10px; color: var(--accent-primary); font-weight: 700; margin-top: 2px;">
+                                💎 BASE CURRENCY: USDC (INS-1854 COMPLIANT)
+                            </div>
+                        </div>
+                        <span class="card-subtitle" style="color: var(--accent-success); font-weight: 700;">🟢 MEV Shield Actief</span>
+                    </div>
+
+                    <!-- 4 Grid KPIs -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0 6px;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Totale Gerealiseerde Winst</div>
+                            <div id="trades-total-profit" style="font-size: 15px; font-weight: 800; color: var(--accent-success); margin: 2px 0;">+$5.653,09 USDC</div>
+                            <div id="trades-total-profit-eur" style="font-size: 10px; color: var(--text-muted);">+€5.228,14</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">24u Realized Profit</div>
+                            <div id="trades-24h-profit" style="font-size: 15px; font-weight: 800; color: var(--accent-success); margin: 2px 0;">+$148,50 USDC</div>
+                            <div style="font-size: 10px; color: var(--accent-success);">▲ +5,5% ROI</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Lopend Ongerealiseerd PnL</div>
+                            <div id="trades-unrealized-pnl" style="font-size: 15px; font-weight: 800; color: var(--accent-success); margin: 2px 0;">+$4,16 USDC</div>
+                            <div id="trades-unrealized-pnl-pct" style="font-size: 10px; color: var(--accent-success);">▲ +2,18% (4 posities)</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Win Rate &amp; Volume</div>
+                            <div id="trades-win-rate" style="font-size: 15px; font-weight: 800; color: #38bdf8; margin: 2px 0;">78.5% Win Rate</div>
+                            <div id="trades-total-count" style="font-size: 10px; color: var(--text-muted);">2.336 trades uitgevoerd</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trades Filter Navigation -->
+                <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                    <button id="trade-filter-active" class="task-filter-btn active" onclick="setTradeFilter('active')">🟢 Lopende Trades (4)</button>
+                    <button id="trade-filter-closed" class="task-filter-btn" onclick="setTradeFilter('closed')">✅ Gesloten Trades</button>
+                    <button id="trade-filter-all" class="task-filter-btn" onclick="setTradeFilter('all')">Alle Trades</button>
+                </div>
+
+                <!-- Lopende Trades Section -->
+                <div id="active-trades-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
+                            🟢 Lopende Trades &amp; Open Posities
+                        </span>
+                        <span id="active-trades-counter" style="font-size: 11px; background: rgba(16,185,129,0.15); color: var(--accent-success); padding: 2px 6px; border-radius: 4px; font-weight: 700;">
+                            4 Actief
+                        </span>
+                    </div>
+                    <div id="active-trades-list">
+                        <!-- Dynamisch gevuld -->
+                    </div>
+                </div>
+
+                <!-- Gesloten Trades Section -->
+                <div id="closed-trades-section" style="margin-top: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
+                            📋 Gesloten Trades • Winst &amp; Verlies per Trade
+                        </span>
+                        <span style="font-size: 11px; color: var(--text-muted);">Laatste trades</span>
+                    </div>
+                    <div id="closed-trades-list">
+                        <!-- Dynamisch gevuld -->
                     </div>
                 </div>
             </section>
@@ -1142,6 +1240,11 @@
                 <span class="nav-icon">📊</span>
                 <span>Cockpit</span>
             </div>
+            <div class="nav-item" onclick="switchTab('trades')">
+                <span class="nav-icon">📈</span>
+                <span>Trades</span>
+                <span class="nav-badge" id="nav-trades-badge" style="display: block;">4</span>
+            </div>
             <div class="nav-item" onclick="switchTab('decisions')">
                 <span class="nav-icon">🗳️</span>
                 <span>Keuzes</span>
@@ -1150,10 +1253,6 @@
             <div class="nav-item" onclick="switchTab('tasks')">
                 <span class="nav-icon">📋</span>
                 <span>Taken</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('team')">
-                <span class="nav-icon">👥</span>
-                <span>Teams</span>
             </div>
             <div class="nav-item" onclick="switchTab('governance')">
                 <span class="nav-icon">🛡️</span>
@@ -1472,12 +1571,16 @@
             const section = document.getElementById('tab-' + tabName);
             if (section) section.classList.add('active');
 
-            const navIdx = {'cockpit': 0, 'decisions': 1, 'tasks': 2, 'team': 3, 'governance': 4}[tabName];
+            const navIdx = {'cockpit': 0, 'trades': 1, 'decisions': 2, 'tasks': 3, 'governance': 4, 'team': 4}[tabName];
             const items = document.querySelectorAll('.nav-item');
             if (items[navIdx]) items[navIdx].classList.add('active');
 
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.selectionChanged();
+            }
+
+            if (tabName === 'trades') {
+                renderTrades();
             }
         }
 
@@ -1540,7 +1643,20 @@
                             <span class="option-label">👉 ${o.label}</span>
                             ${o.desc ? `<span class="option-desc">${o.desc}</span>` : ''}
                         </button>
-                    `).join('') + '</div>';
+                    `).join('') + `
+                        <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px dashed var(--border-color); border-radius: var(--radius-sm);">
+                            <div style="font-size: 11px; font-weight: 700; color: var(--accent-primary); margin-bottom: 4px;">
+                                ✍️ Geen van de bovenstaande opties gewenst?
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 8px;">
+                                Typ hieronder uw eigen instructie of afwijkend directiebesluit:
+                            </div>
+                            <textarea id="custom-input-${d.id}" placeholder="Typ uw eigen instructie (bijv: Voer uit met 50% USDC op Base)..." style="width: 100%; height: 56px; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-size: 12px; resize: none; outline: none; margin-bottom: 8px; font-family: inherit; box-sizing: border-box;"></textarea>
+                            <button class="option-button" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: #0b0f19; font-weight: 800; border: none; padding: 10px; width: 100%; text-align: center;" onclick="submitCustomDecision('${d.issueId}', '${d.id}', '${d.identifier}')">
+                                🚀 Verstuur Mijn Eigen Besluit
+                            </button>
+                        </div>
+                    ` + '</div>';
                 }
 
                 item.innerHTML = `
