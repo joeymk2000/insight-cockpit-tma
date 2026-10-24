@@ -1940,13 +1940,173 @@
             });
         }
 
-        // Submit Decision with 1-Tap
+        // Hard Refresh / Cache Flusher (INS-1861)
+        function forceHardRefresh() {
+            showToast('🔄 Geforceerde cache-flush...');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            const baseUrl = window.location.origin + window.location.pathname;
+            const hash = window.location.hash;
+            const newTs = Date.now();
+            setTimeout(() => {
+                window.location.replace(`${baseUrl}?v=${newTs}${hash}`);
+            }, 250);
+        }
+
+        // Trade Filter & Render (INS-1861)
+        let currentTradeFilter = 'active';
+
+        function setTradeFilter(filter) {
+            currentTradeFilter = filter;
+            document.querySelectorAll('#tab-trades .task-filter-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('trade-filter-' + filter);
+            if (btn) btn.classList.add('active');
+
+            const activeSec = document.getElementById('active-trades-section');
+            const closedSec = document.getElementById('closed-trades-section');
+
+            if (filter === 'active') {
+                if (activeSec) activeSec.style.display = 'block';
+                if (closedSec) closedSec.style.display = 'none';
+            } else if (filter === 'closed') {
+                if (activeSec) activeSec.style.display = 'none';
+                if (closedSec) closedSec.style.display = 'block';
+            } else {
+                if (activeSec) activeSec.style.display = 'block';
+                if (closedSec) closedSec.style.display = 'block';
+            }
+        }
+
+        function renderTrades() {
+            if (!appState || !appState.tradesDashboard) return;
+            const td = appState.tradesDashboard;
+
+            // Summary values
+            if (td.summary) {
+                const s = td.summary;
+                const tot = document.getElementById('trades-total-profit');
+                const totEur = document.getElementById('trades-total-profit-eur');
+                const p24 = document.getElementById('trades-24h-profit');
+                const unPnl = document.getElementById('trades-unrealized-pnl');
+                const unPct = document.getElementById('trades-unrealized-pnl-pct');
+                const wr = document.getElementById('trades-win-rate');
+                const tc = document.getElementById('trades-total-count');
+
+                if (tot) tot.textContent = s.totalRealizedProfitUsd;
+                if (totEur) totEur.textContent = s.totalRealizedProfitEur;
+                if (p24) p24.textContent = s.last24hProfitUsd;
+                if (unPnl) unPnl.textContent = s.unrealizedPnlUsd;
+                if (unPct) unPct.textContent = `▲ ${s.unrealizedPnlPct} (${s.activePositionsCount} posities)`;
+                if (wr) wr.textContent = `${s.winRatePct}% Win Rate`;
+                if (tc) tc.textContent = `${s.totalTrades} trades uitgevoerd`;
+            }
+
+            // Active trades list
+            const activeContainer = document.getElementById('active-trades-list');
+            if (activeContainer && td.activeTrades) {
+                activeContainer.innerHTML = '';
+                td.activeTrades.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'trade-card';
+                    card.style.cssText = 'background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.25);';
+
+                    const pnlClass = t.isPositive ? 'var(--accent-success)' : 'var(--accent-danger)';
+                    const pnlSign = t.isPositive ? '+' : '';
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 13px; font-weight: 800; color: #fff;">${t.pair}</span>
+                                    <span style="font-size: 10px; background: rgba(56,189,248,0.15); color: var(--accent-primary); padding: 1px 5px; border-radius: 4px; font-weight: 700;">${t.chain}</span>
+                                </div>
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">
+                                    ${t.strategy}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 13px; font-weight: 800; color: ${pnlClass};">
+                                    ${pnlSign}$${t.unrealizedPnlUsd.toFixed(2)} USDC
+                                </div>
+                                <div style="font-size: 10px; font-weight: 700; color: ${pnlClass};">
+                                    ${pnlSign}${t.unrealizedPnlPct.toFixed(2)}%
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin: 8px 0 6px; font-size: 11px;">
+                            <div>
+                                <span style="color: var(--text-muted); font-size: 9px; display: block;">ENTRY PRIJS</span>
+                                <b style="color: var(--text-primary);">$${t.entryPrice.toFixed(4)}</b>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-muted); font-size: 9px; display: block;">LIVE PRIJS</span>
+                                <b style="color: var(--accent-primary);">$${t.currentPrice.toFixed(4)}</b>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-muted); font-size: 9px; display: block;">POSITIE (USDC)</span>
+                                <b style="color: var(--text-primary);">$${t.sizeUsd.toFixed(2)}</b>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text-muted); padding-top: 2px;">
+                            <span>⏱️ Geopend: ${t.openedAt}</span>
+                            <span style="color: var(--accent-success); font-weight: 600;">● ${t.status} (Trailing TP: $${t.targetPrice.toFixed(4)})</span>
+                        </div>
+                    `;
+                    activeContainer.appendChild(card);
+                });
+            }
+
+            // Closed trades list
+            const closedContainer = document.getElementById('closed-trades-list');
+            if (closedContainer && td.closedTrades) {
+                closedContainer.innerHTML = '';
+                td.closedTrades.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'trade-card';
+                    card.style.cssText = 'background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 8px;';
+
+                    const pnlColor = t.isPositive ? 'var(--accent-success)' : 'var(--accent-danger)';
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 12px; font-weight: 700; color: #fff;">${t.pair}</span>
+                                    <span style="font-size: 9px; background: rgba(255,255,255,0.06); color: var(--text-secondary); padding: 1px 4px; border-radius: 3px;">${t.chain}</span>
+                                    <span style="font-size: 9px; background: rgba(56,189,248,0.1); color: var(--accent-primary); padding: 1px 4px; border-radius: 3px;">${t.type}</span>
+                                </div>
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">
+                                    Entry: ${t.entryPrice} ➔ Exit: ${t.exitPrice} (${t.duration})
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 13px; font-weight: 800; color: ${pnlColor};">
+                                    ${t.profitUsd}
+                                </div>
+                                <div style="font-size: 10px; font-weight: 700; color: ${pnlColor};">
+                                    ${t.profitEur} (${t.profitPct})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4px; margin-top: 4px;">
+                            <span>${t.closedAt}</span>
+                            <span style="font-family: monospace; color: var(--accent-primary);">${t.txHash.slice(0, 10)}...${t.txHash.slice(-6)} ↗</span>
+                        </div>
+                    `;
+                    closedContainer.appendChild(card);
+                });
+            }
+        }
+
+        // Submit Decision with 1-Tap & Menu Fallback
         function submitDecision(issueId, interactionId, optionId, label) {
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('heavy');
             }
 
-            showToast('✅ Keuze vastgelegd: ' + label);
+            showToast('⏳ Keuze verwerken: ' + label);
 
             const d = appState.decisions.find(item => item.id === interactionId);
             if (d) {
@@ -1955,9 +2115,12 @@
             }
             renderDecisions();
 
-            let sendDataSuccess = false;
-            try {
-                if (tg && typeof tg.sendData === 'function') {
+            // In Telegram WebApp, sendData only works when opened from an Inline Keyboard (initDataUnsafe.query_id exists)
+            const canSendData = Boolean(tg && tg.initDataUnsafe && tg.initDataUnsafe.query_id && typeof tg.sendData === 'function');
+            let delivered = false;
+
+            if (canSendData) {
+                try {
                     tg.sendData(JSON.stringify({
                         action: "decision",
                         issueId: issueId,
@@ -1965,19 +2128,85 @@
                         optionId: optionId,
                         label: label
                     }));
-                    sendDataSuccess = true;
+                    delivered = true;
+                    showToast('✅ Keuze direct vastgelegd!');
+                } catch (err) {
+                    console.warn("sendData error:", err);
                 }
-            } catch (err) {
-                console.log("sendData niet ondersteund in deze view mode, fallback naar link");
             }
 
-            if (!sendDataSuccess) {
+            // In Menu Button mode, Telegram ignores tg.sendData silently.
+            // We switch to the bot chat via deep link to record the decision!
+            if (!delivered) {
                 const targetUrl = `https://t.me/Insightlabsbot?start=dec_${interactionId}_${optionId}`;
-                if (tg && typeof tg.openTelegramLink === 'function') {
-                    tg.openTelegramLink(targetUrl);
-                } else {
-                    window.location.href = targetUrl;
+                showToast('🚀 Verbinding met bot om keuze te bevestigen...');
+                setTimeout(() => {
+                    if (tg && typeof tg.openTelegramLink === 'function') {
+                        tg.openTelegramLink(targetUrl);
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                }, 300);
+            }
+        }
+
+        // Submit Custom Decision (INS-1861)
+        function submitCustomDecision(issueId, interactionId, identifier) {
+            const input = document.getElementById('custom-input-' + interactionId);
+            const text = input ? input.value.trim() : '';
+            if (!text) {
+                showToast('⚠️ Vul eerst uw instructie in');
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+                return;
+            }
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('heavy');
+            }
+
+            showToast('⏳ Eigen instructie verwerken...');
+
+            const d = appState.decisions.find(item => item.id === interactionId);
+            if (d) {
+                d.status = 'resolved';
+                d.resolvedOption = text;
+            }
+            renderDecisions();
+
+            const canSendData = Boolean(tg && tg.initDataUnsafe && tg.initDataUnsafe.query_id && typeof tg.sendData === 'function');
+            let delivered = false;
+
+            if (canSendData) {
+                try {
+                    tg.sendData(JSON.stringify({
+                        action: "decision",
+                        issueId: issueId,
+                        interactionId: interactionId,
+                        optionId: "custom",
+                        customAnswer: text,
+                        label: text
+                    }));
+                    delivered = true;
+                    showToast('✅ Eigen instructie vastgelegd!');
+                } catch (err) {
+                    console.warn("sendData error:", err);
                 }
+            }
+
+            if (!delivered) {
+                // Clipboard copy helper
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(`/keuze ${text}`).catch(() => {});
+                }
+                const targetUrl = `https://t.me/Insightlabsbot?start=dec_${interactionId}_custom`;
+                showToast('🚀 Schakelen naar chat om instructie te bevestigen...');
+                setTimeout(() => {
+                    if (tg && typeof tg.openTelegramLink === 'function') {
+                        tg.openTelegramLink(targetUrl);
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                }, 350);
             }
         }
 
@@ -2074,6 +2303,7 @@
 
             renderNodes();
             renderDecisions();
+            renderTrades();
             renderTasks();
             renderTeam();
             renderMandates();
@@ -2112,6 +2342,8 @@
             const hash = window.location.hash.toLowerCase();
             if (hash.includes('decision') || hash.includes('keuze')) {
                 switchTab('decisions');
+            } else if (hash.includes('trade') || hash.includes('pnl')) {
+                switchTab('trades');
             } else if (hash.includes('task') || hash.includes('taken')) {
                 switchTab('tasks');
             } else if (hash.includes('team')) {
